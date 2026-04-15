@@ -176,6 +176,9 @@ async def build_view(
 
         await _clear()
 
+        appeal_content_block.value = appeal_content_block_default_value
+        appeal_content_block.update()
+
         message_block.value = default_message_text
         message_block.update()
 
@@ -199,6 +202,15 @@ async def build_view(
         default_message_text := "Введіть інформацію громадянина",
         size=style.settings.text_size,
     )
+
+    appeal_content_block_default_value = """Суть звернення:
+
+Чи зверталися до ОСР, місцевої влади, керуючої компанії тощо:
+
+Якщо так, який результат:
+
+Що просите у Держенергонагляду:
+"""
 
     applicant_block = [
         applicant_name_block := ft.TextField(
@@ -237,7 +249,7 @@ async def build_view(
         ),
         appeal_content_block := ft.TextField(
             label="Зміст звернення *",
-            value="",
+            value=appeal_content_block_default_value,
             hint_text="Опишіть суть звернення громадянина...",
             multiline=True,
             min_lines=3,
