@@ -64,6 +64,7 @@ build-backend = "setuptools.build_meta"
 [project.urls]
 "Homepage" = "https://www.bogdanovych.org"
 "Repository" = "https://github.com/BogdanovychA/h-line"
+"DOI" = "https://doi.org/10.5281/zenodo.19590690"
 "Bug Tracker" = "https://github.com/BogdanovychA/h-line/issues"
 
 [tool.black]
