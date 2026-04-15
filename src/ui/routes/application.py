@@ -89,7 +89,7 @@ async def build_view(
 
         appeal_content = appeal_content_block.value.strip()
         if not appeal_content:
-            message_block.value = "Введіть текст звернення громадянина"
+            message_block.value = "Введіть текст звернення"
             message_block.update()
             return
 
@@ -97,7 +97,7 @@ async def build_view(
             applicant_category_switcher.value
             == applicant_category_switcher_options[0].text
         ):
-            message_block.value = "Оберіть категорію заявника"
+            message_block.value = "Оберіть категорію"
             message_block.update()
             return
 
@@ -105,7 +105,7 @@ async def build_view(
             applicant_social_status_switcher.value
             == applicant_social_status_switcher_options[0].text
         ):
-            message_block.value = "Оберіть соціальний стан заявника"
+            message_block.value = "Оберіть соціальний стан"
             message_block.update()
             return
 
@@ -115,8 +115,8 @@ async def build_view(
                 applicant_address=applicant_address,
                 applicant_telephone=applicant_telephone,
                 applicant_email=applicant_email,
-                applicant_category=applicant_category_switcher.value,
-                applicant_social_status=applicant_social_status_switcher.value,
+                applicant_category=str(applicant_category_switcher.value),
+                applicant_social_status=str(applicant_social_status_switcher.value),
                 appeal_content=appeal_content,
                 officer_position=officer_position,
                 officer_name=officer_name,
@@ -199,38 +199,38 @@ async def build_view(
     page.title = TITLE
 
     message_block = ft.Text(
-        default_message_text := "Введіть інформацію громадянина",
+        default_message_text := "Введіть інформацію",
         size=style.settings.text_size,
     )
 
     appeal_content_block_default_value = """Суть звернення:
 
-Чи зверталися до ОСР, місцевої влади, керуючої компанії тощо:
+Чи звертався громадянин до ОСР, місцевої влади, керуючої компанії тощо:
 
 Якщо так, який результат:
 
-Що просите у Держенергонагляду:
+Що громадянин просить у Держенергонагляду:
 """
 
     applicant_block = [
         applicant_name_block := ft.TextField(
-            label="ПІБ заявника *",
+            label="ПІБ громадянина *",
             value="",
-            hint_text="Прізвище, Ім'я, По батькові",
+            hint_text="Прізвище, ім'я, по батькові",
             width=400,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
         ),
         applicant_address_block := ft.TextField(
-            label="Адреса проживання *",
+            label="Адреса проживання громадянина *",
             value="",
-            hint_text="01001, м. Київ, вулиця Хрещатик, 1",
+            hint_text="01001, м. Київ, вулиця Хрещатик, буд. 1",
             width=400,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
         ),
         applicant_telephone_block := ft.TextField(
-            label="Номер телефону",
+            label="Номер телефону громадянина",
             value="",
             hint_text="+380441234567",
             keyboard_type=ft.KeyboardType.PHONE,
@@ -239,7 +239,7 @@ async def build_view(
             border_color=style.settings.form_border_color,
         ),
         applicant_email_block := ft.TextField(
-            label="Електронна пошта",
+            label="Електронна пошта громадянина",
             value="",
             hint_text="example@domain.com",
             keyboard_type=ft.KeyboardType.EMAIL,
@@ -248,7 +248,7 @@ async def build_view(
             border_color=style.settings.form_border_color,
         ),
         appeal_content_block := ft.TextField(
-            label="Зміст звернення *",
+            label="Зміст звернення громадянина",
             value=appeal_content_block_default_value,
             hint_text="Опишіть суть звернення громадянина...",
             multiline=True,
@@ -300,7 +300,7 @@ async def build_view(
     )
 
     applicant_category_switcher = ft.Dropdown(
-        label="Категорія заявника *",
+        label="Категорія громадянина *",
         label_style=ft.TextStyle(size=style.settings.text_size),
         value=applicant_category_switcher_options[0].text,
         options=applicant_category_switcher_options,
@@ -328,7 +328,7 @@ async def build_view(
     )
 
     applicant_social_status_switcher = ft.Dropdown(
-        label="Соціальний стан *",
+        label="Соціальний стан громадянина *",
         label_style=ft.TextStyle(size=style.settings.text_size),
         value=applicant_social_status_switcher_options[0].text,
         options=applicant_social_status_switcher_options,

@@ -120,25 +120,25 @@ async def build_main_view(
 
     officer_block = [
         officer_name_block := ft.TextField(
-            label="Ваші ПІБ",
+            label="Прізвище, ім'я та по батькові",
             value=box.officer.name,
-            hint_text="ПІБ: Шевченко Тарас Григорович",
+            hint_text="Шевченко Тарас Григорович",
             width=350,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
         ),
         officer_position_block := ft.TextField(
-            label="Ваша посада",
+            label="Посада (повністю, з назвою структурного підрозділу)",
             value=box.officer.position,
-            hint_text="Посада (коротко): головний спеціаліст",
+            hint_text="Директор департаменту...",
             width=350,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
         ),
         officer_email_block := ft.TextField(
-            label="Ваша електронна пошта",
+            label="Електронна пошта",
             value=box.officer.email,
-            hint_text="Email: ShevchenkoT@sies.gov.ua",
+            hint_text="ShevchenkoT@sies.gov.ua",
             width=350,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
