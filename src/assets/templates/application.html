@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <title>Звернення</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            text-transform: uppercase;
+            font-size: 1.2em;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: #555;
+            display: inline-block;
+            width: 120px; /* Вирівнювання двокрапок */
+        }
+
+        .content-block {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: "Courier New", Courier, monospace;
+            white-space: pre-wrap;
+        }
+
+        @media print {
+            body { max-width: 100%; padding: 0; }
+            h3 { border-bottom: 1px solid #000; }
+            .content-block { border: 1px solid #000; background: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <h3>ЗАЯВНИК:</h3>
+    <ul>
+        <li><strong>ПІБ:</strong> {{ applicant_name }}</li>
+        <li><strong>Адреса:</strong> {{ applicant_address }}</li>
+        <li><strong>Телефон:</strong> {{ applicant_telephone }}</li>
+        <li><strong>Email:</strong> {{ applicant_email }}</li>
+        <li><strong>Категорія:</strong> {{ applicant_category }}</li>
+        <li><strong>Соціальний стан:</strong> {{ applicant_social_status }}</li>
+    </ul>
+
+    <h3>ЗМІСТ ЗАЯВИ:</h3>
+    <div class="content-block">{{ appeal_content }}</div>
+
+    <h3>ДЕТАЛІ ПРИЙОМУ:</h3>
+    <ul>
+        <li><strong>Дата:</strong> {{ reception_date }}</li>
+        <li><strong>Час:</strong> {{ reception_time }}</li>
+    </ul>
+
+    <h3>ЗВЕРНЕННЯ ПРИЙНЯТО:</h3>
+    <ul>
+        <li><strong>ПІБ:</strong> {{ officer_name }}</li>
+        <li><strong>Посада:</strong> {{ officer_position }}</li>
+    </ul>
+
+</body>
+</html>

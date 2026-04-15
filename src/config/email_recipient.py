@@ -1,0 +1,28 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2026 Andrii Bogdanovych
+# Licensed under the EUPL-1.2 or later
+# See the LICENSE file in the project root for more information.
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from config import app
+
+
+class Settings(BaseSettings):
+    """
+    Налаштування отримувача електронної пошти.
+    """
+
+    to: str | None = None
+    cc: str | None = ""
+    bcc: str | None = ""
+
+    model_config = SettingsConfigDict(
+        env_file=app.settings.assets_dir / ".env",
+        env_prefix="EMAIL_RECIPIENT__",
+        extra="ignore",
+    )
+
+
+settings = Settings()

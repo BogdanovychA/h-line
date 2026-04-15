@@ -1,0 +1,75 @@
+[project]
+name = "h-line"
+version = "1.0.1"
+description = "Open-source hotline automation tool for processing citizen appeals in the Ukrainian public sector."
+readme = "README.md"
+requires-python = ">=3.14"
+authors = [
+    { name = "Andrii Bogdanovych", email = "a@bogdanovych.org" }
+]
+license = "EUPL-1.2"
+keywords = [
+    "python", "flet", "government-tech", "digital-transformation", "ukraine",
+    "citizen-appeals", "open-source", "eupl-license", "automation"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Government",
+    "Natural Language :: Ukrainian",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Operating System :: OS Independent",
+    "Topic :: Office/Business",
+    "Topic :: Communications :: Email",
+]
+dependencies = [
+    "flet==0.84.0",
+    "flet-cli==0.84.0",             # Required for production (web)
+    "flet-web==0.84.0",             # Required for production (web)
+    "flet-desktop==0.84.0",         # Required for production (web)
+    "flet-storage==1.1.1",
+    "pydantic-settings==2.13.1",
+    "pydantic[email]==2.13.0",
+    "docxtpl==0.20.2",
+    "pydantic-extra-types==2.11.2",
+    "phonenumbers==9.0.28",
+    "httpx==0.28.1",
+    "jinja2==3.1.6",
+]
+
+[dependency-groups]
+dev = [
+    "flet-desktop-light",
+    "pre_commit",
+    "black",
+    "isort",
+]
+
+[tool.flet]
+org = "ua.gov.sies"
+product = "H-Line"
+company = "Personal"
+copyright = "Copyright (c) 2026 Andrii Bogdanovych"
+
+[tool.flet.app]
+path = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+"Homepage" = "https://www.bogdanovych.org"
+"Repository" = "https://github.com/BogdanovychA/h-line"
+"Bug Tracker" = "https://github.com/BogdanovychA/h-line/issues"
+
+[tool.black]
+line-length = 88
+target-version = ['py314']
+skip-string-normalization = true
+
+[tool.isort]
+profile = "black"

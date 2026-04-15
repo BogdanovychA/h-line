@@ -1,0 +1,78 @@
+### Agents
+.agents/
+
+### Git & Metadata
+.git/
+.gitignore
+.dockerignore
+.pre-commit-config.yaml
+CITATION.cff
+
+### Docs & Info (not needed in container)
+docs/
+README.md
+AUTHORS.md
+LICENSE
+NOTICE
+SECURITY.md
+CONTRIBUTING.md
+
+### IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+### Virtual environments & uv
+.venv*/
+.cache/uv/
+__pypackages__/
+
+### Environmental variables
+src/assets/.env
+*.env
+*.env.*
+!.env.example
+!src/assets/.env.example
+
+### Python-generated files
+**/__pycache__/
+**/*.pyc
+*.py[oc]
+dist/
+wheels/
+*.egg-info
+build*/
+.flet/
+
+### Tests & CI
+htmlcov/
+.pytest_cache/
+.coverage
+.tox/
+.nox/
+tests/
+
+### Project paths
+src/assets/output/*
+!src/assets/output/.gitkeep
+#
+src/assets/templates/*
+!src/assets/templates/.gitkeep
+#
+bin/
+src/temp/
+
+### Docker
+docker_data/*
+#
+!docker_data/output/
+docker_data/output/*
+!docker_data/output/.gitkeep
+#
+!docker_data/templates/
+docker_data/templates/*
+!docker_data/templates/.gitkeep
+#
+Dockerfile
+docker-compose.yml

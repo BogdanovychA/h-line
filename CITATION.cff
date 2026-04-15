@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Bogdanovych"
+    given-names: "Andrii"
+    orcid: "https://orcid.org/0009-0006-9045-5675"
+title: "h-line"
+version: 1.0.1
+abstract: "Open-source hotline automation tool for processing citizen appeals in the Ukrainian public sector."
+repository-code: "https://github.com/BogdanovychA/h-line"
+license: EUPL-1.2
+date-released: 2026-04-10

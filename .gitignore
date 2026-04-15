@@ -1,0 +1,58 @@
+### Agents
+.agents/
+
+### IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+### Virtual environments & uv
+.venv*/
+.cache/uv/
+__pypackages__/
+
+### Environmental variables
+src/assets/.env
+*.env
+*.env.*
+!.env.example
+!src/assets/.env.example
+
+### Python-generated files
+**/__pycache__/
+**/*.pyc
+*.py[oc]
+dist/
+wheels/
+*.egg-info
+build*/
+.flet/
+
+### Logs
+*.log
+logs/
+
+### Tests
+htmlcov/
+.pytest_cache/
+.coverage
+.tox/
+.nox/
+
+### Project
+src/assets/output/*
+!src/assets/output/.gitkeep
+bin/
+src/temp/
+
+### Docker
+docker_data/*
+#
+!docker_data/output/
+docker_data/output/*
+!docker_data/output/.gitkeep
+#
+!docker_data/templates/
+docker_data/templates/*
+!docker_data/templates/.gitkeep
