@@ -4,7 +4,6 @@
 ### IDEs
 .idea/
 .vscode/
-*.swp
 *.swo
 
 ### Virtual environments & uv
@@ -59,6 +58,7 @@ docker_data/templates/*
 
 #
 **/*.tmp
+**/*.swp
 
 # Clouds
 **/.stfolder/
@@ -68,4 +68,3 @@ docker_data/templates/*
 **/~syncthing~*.tmp
 **/*sync-conflict*
 **/*conflicted*
-

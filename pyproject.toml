@@ -1,9 +1,9 @@
 [project]
 name = "h-line"
-version = "1.0.3"
+version = "1.0.4"
 description = "Open-source hotline automation tool for processing citizen appeals in the Ukrainian public sector."
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 authors = [
     { name = "Andrii Bogdanovych", email = "a@bogdanovych.org" }
 ]
@@ -27,9 +27,9 @@ dependencies = [
     "flet-cli==0.84.0",             # Required for production (web)
     "flet-web==0.84.0",             # Required for production (web)
     "flet-desktop==0.84.0",         # Required for production (web)
-    "flet-storage==1.1.1",
+    "flet-storage==1.1.2",
     "pydantic-settings==2.13.1",
-    "pydantic[email]==2.13.0",
+    "pydantic[email]==2.13.1",
     "docxtpl==0.20.2",
     "pydantic-extra-types==2.11.2",
     "phonenumbers==9.0.28",
@@ -69,7 +69,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 88
-target-version = ['py314']
+target-version = ['py312']
 skip-string-normalization = true
 
 [tool.isort]

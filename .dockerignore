@@ -20,7 +20,6 @@ CONTRIBUTING.md
 ### IDEs
 .idea/
 .vscode/
-*.swp
 *.swo
 
 ### Virtual environments & uv
@@ -79,6 +78,7 @@ docker-compose.yml
 
 #
 **/*.tmp
+**/*.swp
 
 # Clouds
 **/.stfolder/
