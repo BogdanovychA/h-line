@@ -76,3 +76,15 @@ docker_data/templates/*
 #
 Dockerfile
 docker-compose.yml
+
+#
+**/*.tmp
+
+# Clouds
+**/.stfolder/
+**/.stversions/
+**/.stignore
+**/.syncthing.*.tmp
+**/~syncthing~*.tmp
+**/*sync-conflict*
+**/*conflicted*
