@@ -1,6 +1,6 @@
 # 📝 H-Line (Hotline App)
 
-[![DOI](https://zenodo.org/badge/1211130746.svg)](https://doi.org/10.5281/zenodo.19590690)
+[![DOI](https://zenodo.org/badge/1211130746.svg)](https://doi.org/10.5281/zenodo.19590690) ![GitHub License](https://img.shields.io/github/license/BogdanovychA/h-line?logoColor=grey&color=blue)
 
 Застосунок для швидкої фіксації та надсилання звернень громадян через електронну пошту. Побудований на базі **Flet** (Python), підтримує генерацію документів (DOCX, MD, HTML) та автоматичне відправлення через SMTP.
 
