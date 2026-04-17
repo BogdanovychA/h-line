@@ -56,3 +56,16 @@ docker_data/output/*
 !docker_data/templates/
 docker_data/templates/*
 !docker_data/templates/.gitkeep
+
+#
+**/*.tmp
+
+# Clouds
+**/.stfolder/
+**/.stversions/
+**/.stignore
+**/.syncthing.*.tmp
+**/~syncthing~*.tmp
+**/*sync-conflict*
+**/*conflicted*
+
