@@ -57,11 +57,7 @@ def create_path_dir(output_dir: Path, fluent: FluentManager | None = None) -> Pa
         dir_name.mkdir(parents=True, exist_ok=True)
         return dir_name
     except PermissionError:
-        msg = (
-            fluent.get("log-error-access-create-dir")
-            if fluent
-            else "Access denied when creating directory"
-        )
+        msg = fluent.get("log-error-access-create-dir")
         logger.exception(msg)
         raise PermissionError
 
@@ -81,11 +77,7 @@ def file_to_buffer(file_path: Path, fluent: FluentManager | None = None) -> Byte
     """Зчитує файл у буфер BytesIO."""
 
     if not file_path.is_file():
-        msg = (
-            fluent.get("log-error-file-not-found", path=str(file_path))
-            if fluent
-            else f"File not found: {file_path}"
-        )
+        msg = fluent.get("log-error-file-not-found", path=str(file_path))
         raise EmailFileNotFoundError(msg)
 
     buffer = BytesIO(file_path.read_bytes())
@@ -99,7 +91,7 @@ def save(
 ) -> Path | None:
     """Зберігає вміст буфера у файл за вказаним шляхом."""
     if buffer is None:
-        msg = fluent.get("log-error-buffer-is-none") if fluent else "BytesIO is None"
+        msg = fluent.get("log-error-buffer-is-none")
         logger.error(msg)
         return None
 
@@ -110,17 +102,12 @@ def save(
         return path
 
     except PermissionError:
-        msg = (
-            fluent.get("log-error-access-save-file")
-            if fluent
-            else "Access denied when saving file"
-        )
+        msg = fluent.get("log-error-access-save-file")
         logger.exception(msg)
         raise PermissionError
 
     except Exception:
-        msg = fluent.get("log-error-save-file") if fluent else "Error saving file"
+        msg = fluent.get("log-error-save-file")
         logger.exception(msg)
         return None
-    finally:
-        buffer.seek(0)
+

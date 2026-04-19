@@ -37,15 +37,10 @@ class EmailManager:
     ) -> Type[SMTPSenderBase]:
         """Повертає зареєстрований клас протоколу або викидає помилку."""
         if protokol_type not in cls._REGISTRY:
-            msg = (
-                fluent.get(
-                    "log-error-protocol-not-registered", protocol=str(protokol_type)
-                )
-                if fluent
-                else f"Implementation {protokol_type} is not registered!"
-            )
+            msg = fluent.get("log-error-protocol-not-registered", protocol=str(protokol_type))
             raise ValueError(msg)
         return cls._REGISTRY[protokol_type]
+
 
     def __init__(self, sender_protokol: SMTPSenderBase) -> None:
         """Ініціалізація менеджера електронної пошти конкретним протоколом відправки."""

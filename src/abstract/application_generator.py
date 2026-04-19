@@ -72,11 +72,7 @@ class GlobalGenerator(BaseGenerator):
     ) -> Type[BaseTemplateManager]:
         """Повертає зареєстрований клас генератора або викидає помилку."""
         if file_type not in cls._REGISTRY:
-            msg = (
-                fluent.get("log-error-generator-not-registered", type=str(file_type))
-                if fluent
-                else f"Generator for type {file_type} is not registered!"
-            )
+            msg = fluent.get("log-error-generator-not-registered", type=str(file_type))
             raise ValueError(msg)
         return cls._REGISTRY[file_type]
 
