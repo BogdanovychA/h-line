@@ -119,9 +119,7 @@ def save(
         raise PermissionError
 
     except Exception:
-        msg = (
-            fluent.get("log-error-save-file") if fluent else "Error saving file"
-        )
+        msg = fluent.get("log-error-save-file") if fluent else "Error saving file"
         logger.exception(msg)
         return None
     finally:
