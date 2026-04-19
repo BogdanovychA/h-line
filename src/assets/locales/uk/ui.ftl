@@ -76,7 +76,7 @@ status-pensioner = Пенсіонер
 status-pensioner-military = Пенсіонер з числа військовослужбовців
 status-religious = Служитель релігійної організації
 status-journalist = Журналіст
-status-prisoner = Особа, що позбавлена волі; особа, воля якої обмежена
+status-prisoner = Особа, що позбавлена волі; особа, воля яка обмежена
 status-worker = Робітник
 status-peasant = Селянин
 status-budget-worker = Працівник бюджетної сфери
@@ -99,26 +99,6 @@ officer-position-hint = Директор департаменту...
 officer-email-label = Електронна пошта
 officer-email-hint = ShevchenkoT@sies.gov.ua
 
-# Email strings
-email-subject = Звернення на гарячу лінію: {$filename}
-email-body =
-    Звернення на "гарячу лінію" Держенергонагляду у додатку до цього листа.
-
-    Назва файлу: {$filename}
-
-# Logging strings
-log-error-write-officer-name = Помилка при записі officer_name
-log-error-write-officer-position = Помилка при записі officer_position
-log-error-write-officer-email = Помилка при записі officer_email
-log-error-read-client-id = Помилка при зчитуванні даних про client_id
-log-error-read-officer-data = Помилка при зчитуванні даних про офіцера
-log-error-generate-file = Помилка при генерації файлу
-log-error-access-create-dir = Помилка прав доступу при створенні каталогу
-log-error-access-save-file = Помилка прав доступу при збереженні файлу
-log-error-save-file = Помилка збереження файлу
-log-info-email-sent = Лист успішно відправлено на {$to}
-log-error-smtp-critical = Критична помилка SMTP ({$protocol})
-
 # About and Author views
 about-title = Про застосунок
 author-title = Про автора
@@ -129,6 +109,7 @@ sies = Держенергонагляд
 author-name = Андрій БОГДАНОВИЧ
 home-page = Домашня сторінка
 other-apps = Інші застосунки автора
+
 # Error 404
 error-404-title = Сторінка не знайдена
 target-page = Цільова сторінка: {$route}
