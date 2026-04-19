@@ -94,7 +94,8 @@ def save(
 ) -> Path | None:
     """Зберігає вміст буфера у файл за вказаним шляхом."""
     if buffer is None:
-        logger.error("BytesIO is None")
+        msg = fluent.get("log-error-buffer-is-none") if fluent else "BytesIO is None"
+        logger.error(msg)
         return None
 
     buffer.seek(0)

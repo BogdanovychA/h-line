@@ -8,5 +8,6 @@ log-error-generate-file = Помилка при генерації файлу
 log-error-access-create-dir = Помилка прав доступу при створенні каталогу
 log-error-access-save-file = Помилка прав доступу при збереженні файлу
 log-error-save-file = Помилка збереження файлу
+log-error-buffer-is-none = BytesIO is None
 log-info-email-sent = Лист успішно відправлено на {$to}
 log-error-smtp-critical = Критична помилка SMTP ({$protocol})
