@@ -90,7 +90,9 @@ async def build_main_view(
         message_block.value = box.fluent.get("entering-message")
 
         if app.settings.send_to_email:
-            box.sender = application_sender.EmailSender(cc_recipients=[email])
+            box.sender = application_sender.EmailSender(
+                fluent=box.fluent, cc_recipients=[email]
+            )
 
         event.page.update()
         await page.push_route(application.ROUTE)

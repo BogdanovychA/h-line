@@ -99,6 +99,13 @@ officer-position-hint = Директор департаменту...
 officer-email-label = Електронна пошта
 officer-email-hint = ShevchenkoT@sies.gov.ua
 
+# Email strings
+email-subject = Звернення на гарячу лінію: {$filename}
+email-body =
+    Звернення на "гарячу лінію" Держенергонагляду у додатку до цього листа.
+
+    Назва файлу: {$filename}
+
 # About and Author views
 about-title = Про застосунок
 author-title = Про автора
