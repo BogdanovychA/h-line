@@ -10,6 +10,7 @@ import uuid
 
 import flet as ft
 from flet_storage import FletStorage
+from fluent_manager import FluentManager
 from pydantic import ValidationError
 
 from abstract import (
@@ -50,7 +51,7 @@ async def build_main_view(
 
         name = officer_name_block.value.strip()
         if not name:
-            message_block.value = "Введіть прізвище"
+            message_block.value = box.fluent.get("error-enter-last-name")
             event.page.update()
             return
         if box.officer.name != name:
@@ -62,7 +63,7 @@ async def build_main_view(
 
         position = officer_position_block.value.strip()
         if not position:
-            message_block.value = "Введіть посаду"
+            message_block.value = box.fluent.get("error-enter-position")
             event.page.update()
             return
         if box.officer.position != position:
@@ -82,11 +83,11 @@ async def build_main_view(
                     logger.exception("Помилка при записі officer_email")
 
         except ValidationError:
-            message_block.value = "Введіть коректний email"
+            message_block.value = box.fluent.get("error-enter-email")
             event.page.update()
             return
 
-        message_block.value = "Вхід..."
+        message_block.value = box.fluent.get("entering-message")
 
         if app.settings.send_to_email:
             box.sender = application_sender.EmailSender(cc_recipients=[email])
@@ -111,34 +112,34 @@ async def build_main_view(
 
         event.page.update()
 
-    page.title = root.TITLE
+    page.title = box.fluent.get("app-title")
 
     message_block = ft.Text(
-        default_message_text := "Введіть ваші ПІБ, посаду та електронну пошту",
+        default_message_text := box.fluent.get("main-view-instruction"),
         size=style.settings.text_size,
     )
 
     officer_block = [
         officer_name_block := ft.TextField(
-            label="Прізвище, ім'я та по батькові",
+            label=box.fluent.get("officer-name-label"),
             value=box.officer.name,
-            hint_text="Шевченко Тарас Григорович",
+            hint_text=box.fluent.get("officer-name-hint"),
             width=350,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
         ),
         officer_position_block := ft.TextField(
-            label="Посада (повністю, з назвою структурного підрозділу)",
+            label=box.fluent.get("officer-position-label"),
             value=box.officer.position,
-            hint_text="Директор департаменту...",
+            hint_text=box.fluent.get("officer-position-hint"),
             width=350,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
         ),
         officer_email_block := ft.TextField(
-            label="Електронна пошта",
+            label=box.fluent.get("officer-email-label"),
             value=box.officer.email,
-            hint_text="ShevchenkoT@sies.gov.ua",
+            hint_text=box.fluent.get("officer-email-hint"),
             width=350,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
@@ -150,7 +151,7 @@ async def build_main_view(
         scroll=ft.ScrollMode.ADAPTIVE,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            elements.app_bar(root.TITLE),
+            elements.app_bar(box.fluent.get("app-title")),
             # ft.Text(""),
             ft.Image(
                 src="/images/logo-sies-317x312.png",
@@ -172,8 +173,8 @@ async def build_main_view(
             ft.Text(""),
             ft.Row(
                 controls=[
-                    author.button(page),
-                    about.button(page),
+                    author.button(page, box.fluent.get("author-title")),
+                    about.button(page, box.fluent.get("about-title")),
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
@@ -201,12 +202,12 @@ async def main(page: ft.Page):
             case application.ROUTE:
                 page.views.append(await application.build_view(page, box))
             case author.ROUTE:
-                page.views.append(author.build_view(page))
+                page.views.append(author.build_view(page, box))
             case about.ROUTE:
-                page.views.append(about.build_view(page))
+                page.views.append(about.build_view(page, box))
             case _:
                 if page.route != root.ROUTE:
-                    page.views.append(error404.build_view(page))
+                    page.views.append(error404.build_view(page, box))
 
         page.update()
 
@@ -217,7 +218,6 @@ async def main(page: ft.Page):
             top_view = page.views[-1]
             await page.push_route(top_view.route)
 
-    page.title = root.TITLE
     page.theme_mode = ft.ThemeMode.DARK
     page.route = root.ROUTE
 
@@ -240,8 +240,15 @@ async def main(page: ft.Page):
             secret_key=google_analytics.settings.secret_key,
         ),
         name_creator=application_name_creator.NameCreator(),
+        fluent=FluentManager(
+            locales=["uk"],
+            locales_path=str(app.settings.locales_dir),
+            default_locale="uk",
+        ),
         saver=application_saver.FileSaver() if app.settings.save_to_disk else None,
     )
+
+    page.title = box.fluent.get("app-title")
 
     await asyncio.sleep(0.2)
 

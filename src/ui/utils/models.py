@@ -7,6 +7,7 @@
 from dataclasses import dataclass, field
 
 from flet_storage import FletStorage
+from fluent_manager import FluentManager
 
 from abstract.application_generator import BaseGenerator
 from abstract.application_name_creator import BaseNameCreator
@@ -32,6 +33,7 @@ class PandorasBox:
     generator: BaseGenerator
     ga: MeasurementAPI
     name_creator: BaseNameCreator
+    fluent: FluentManager
     sender: BaseSender | None = None
     saver: BaseSaver | None = None
     client_id: str = ""

@@ -4,6 +4,13 @@
 # Licensed under the EUPL-1.2 or later
 # See the LICENSE file in the project root for more information.
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ui.utils.models import PandorasBox
+
 import asyncio
 
 import flet as ft
@@ -11,31 +18,29 @@ import flet as ft
 from config import app
 from ui.utils import elements, style
 
-TITLE = "Про застосунок"
-
 ROUTE = app.settings.base_url + "/about"
 
 
-def button(page) -> ft.Button:
+def button(page, text: str = "Про застосунок") -> ft.Button:
     """Створює кнопку для переходу на сторінку "Про застосунок" """
     return ft.Button(
-        TITLE,
+        text,
         on_click=lambda: asyncio.create_task(page.push_route(ROUTE)),
     )
 
 
-def build_view(page: ft.Page) -> ft.View:
+def build_view(page: ft.Page, box: PandorasBox) -> ft.View:
     """Будує вікно з інформацією про застосунок"""
-    page.title = TITLE
+    page.title = box.fluent.get("about-title")
     return ft.View(
         route=ROUTE,
         scroll=ft.ScrollMode.ADAPTIVE,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            elements.app_bar(TITLE),
+            elements.app_bar(box.fluent.get("about-title")),
             ft.Text("H-Line", size=style.settings.text_size),
-            ft.Text(f"Версія: {app.settings.version}"),
-            ft.Text(f"Ліцензія: {app.settings.license}"),
+            ft.Text(box.fluent.get("version", version=app.settings.version)),
+            ft.Text(box.fluent.get("license", license=app.settings.license)),
             ft.Text(""),
             ft.Image(
                 src="/images/h-line-logo-no_bg.png",
@@ -46,16 +51,22 @@ def build_view(page: ft.Page) -> ft.View:
             ft.Text(
                 size=style.settings.text_size,
                 spans=[
-                    elements.link("GitHub", "https://github.com/BogdanovychA/h-line"),
+                    elements.link(
+                        box.fluent.get("github"),
+                        "https://github.com/BogdanovychA/h-line",
+                    ),
                 ],
             ),
             ft.Text(
                 size=style.settings.text_size,
                 spans=[
-                    elements.link("Держенергонагляд", "https://sies.gov.ua/"),
+                    elements.link(
+                        box.fluent.get("sies"),
+                        "https://sies.gov.ua/",
+                    ),
                 ],
             ),
             ft.Text(""),
-            elements.back_button(page),
+            elements.back_button(page, box.fluent.get("back")),
         ],
     )
