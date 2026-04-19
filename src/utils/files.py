@@ -60,7 +60,7 @@ def create_path_dir(output_dir: Path, fluent: FluentManager | None = None) -> Pa
         msg = (
             fluent.get("log-error-access-create-dir")
             if fluent
-            else "Помилка прав доступу при створенні каталогу"
+            else "Access denied when creating directory"
         )
         logger.exception(msg)
         raise PermissionError
@@ -77,11 +77,16 @@ def create_path(
     return dir_name / file_name
 
 
-def file_to_buffer(file_path: Path) -> BytesIO:
+def file_to_buffer(file_path: Path, fluent: FluentManager | None = None) -> BytesIO:
     """Зчитує файл у буфер BytesIO."""
 
     if not file_path.is_file():
-        raise EmailFileNotFoundError(f"Файл не знайдено: {file_path}")
+        msg = (
+            fluent.get("log-error-file-not-found", path=str(file_path))
+            if fluent
+            else f"File not found: {file_path}"
+        )
+        raise EmailFileNotFoundError(msg)
 
     buffer = BytesIO(file_path.read_bytes())
     buffer.seek(0)
@@ -108,14 +113,14 @@ def save(
         msg = (
             fluent.get("log-error-access-save-file")
             if fluent
-            else "Помилка прав доступу при збереженні файлу"
+            else "Access denied when saving file"
         )
         logger.exception(msg)
         raise PermissionError
 
     except Exception:
         msg = (
-            fluent.get("log-error-save-file") if fluent else "Помилка збереження файлу"
+            fluent.get("log-error-save-file") if fluent else "Error saving file"
         )
         logger.exception(msg)
         return None

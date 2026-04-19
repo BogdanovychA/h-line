@@ -67,10 +67,17 @@ class GlobalGenerator(BaseGenerator):
         cls._REGISTRY[file_type] = generator_class
 
     @classmethod
-    def get_generator_class(cls, file_type: FileType) -> Type[BaseTemplateManager]:
+    def get_generator_class(
+        cls, file_type: FileType, fluent: FluentManager | None = None
+    ) -> Type[BaseTemplateManager]:
         """Повертає зареєстрований клас генератора або викидає помилку."""
         if file_type not in cls._REGISTRY:
-            raise ValueError(f"Генератор для типу {file_type} не зареєстрований!")
+            msg = (
+                fluent.get("log-error-generator-not-registered", type=str(file_type))
+                if fluent
+                else f"Generator for type {file_type} is not registered!"
+            )
+            raise ValueError(msg)
         return cls._REGISTRY[file_type]
 
     @property
@@ -81,7 +88,7 @@ class GlobalGenerator(BaseGenerator):
     def __init__(self, fluent: FluentManager) -> None:
         """Ініціалізація глобального генератора на основі налаштувань."""
 
-        generator_class = self.get_generator_class(self.file_type)
+        generator_class = self.get_generator_class(self.file_type, fluent=fluent)
 
         self.creator: BaseTemplateManager = generator_class(
             app.settings.templates_dir

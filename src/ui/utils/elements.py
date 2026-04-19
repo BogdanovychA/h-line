@@ -12,7 +12,7 @@ from ui.routes import root
 from ui.utils import style
 
 
-def back_button(page, text: str = "Назад") -> ft.Button:
+def back_button(page, text: str) -> ft.Button:
     """Створює кнопку для повернення на головну сторінку"""
     return ft.Button(
         text,

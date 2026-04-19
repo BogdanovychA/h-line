@@ -24,7 +24,7 @@ from ui.utils import elements, style
 ROUTE = app.settings.base_url + "/application"
 
 
-def button(page, text: str = "Фіксація звернення") -> ft.Button:
+def button(page, text: str) -> ft.Button:
     """Створює кнопку для переходу до фіксації звернення"""
     return ft.Button(
         text,

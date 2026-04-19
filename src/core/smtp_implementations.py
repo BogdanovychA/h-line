@@ -64,7 +64,12 @@ class SMTPSenderBase(ABC):
                     "log-error-smtp-critical", protocol=self.__class__.__name__
                 )
             )
-            raise EmailSendError(f"Не вдалося відправити лист: {e}")
+            msg = (
+                self.fluent.get("log-error-email-send-failed", error=str(e))
+                if self.fluent
+                else f"Failed to send email: {e}"
+            )
+            raise EmailSendError(msg)
 
 
 class SMTPSenderSSL(SMTPSenderBase):

@@ -51,7 +51,9 @@ class EmailSender(BaseSender):
             bcc_recipients=[email_recipient.settings.bcc, *bcc],
         )
 
-        protokol_class = EmailManager.get_protokol_class(email_sender.settings.protokol)
+        protokol_class = EmailManager.get_protokol_class(
+            email_sender.settings.protokol, fluent=fluent
+        )
 
         protokol = protokol_class(
             email_sender.settings.server,

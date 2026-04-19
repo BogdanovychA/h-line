@@ -4,9 +4,14 @@
 # Licensed under the EUPL-1.2 or later
 # See the LICENSE file in the project root for more information.
 
+from __future__ import annotations
+
 import logging
 from email.message import EmailMessage
-from typing import ClassVar, Type
+from typing import TYPE_CHECKING, ClassVar, Type
+
+if TYPE_CHECKING:
+    from fluent_manager import FluentManager
 
 from core.smtp_implementations import SMTPSenderBase
 from models.smtp import SMTPProtokol
@@ -27,10 +32,17 @@ class EmailManager:
         cls._REGISTRY[protokol_type] = protokol_class
 
     @classmethod
-    def get_protokol_class(cls, protokol_type: SMTPProtokol) -> Type[SMTPSenderBase]:
+    def get_protokol_class(
+        cls, protokol_type: SMTPProtokol, fluent: FluentManager | None = None
+    ) -> Type[SMTPSenderBase]:
         """Повертає зареєстрований клас протоколу або викидає помилку."""
         if protokol_type not in cls._REGISTRY:
-            raise ValueError(f"Реалізація {protokol_type} не зареєстрована!")
+            msg = (
+                fluent.get("log-error-protocol-not-registered", protocol=str(protokol_type))
+                if fluent
+                else f"Implementation {protokol_type} is not registered!"
+            )
+            raise ValueError(msg)
         return cls._REGISTRY[protokol_type]
 
     def __init__(self, sender_protokol: SMTPSenderBase) -> None:

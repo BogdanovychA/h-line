@@ -21,7 +21,7 @@ from ui.utils import elements, style
 ROUTE = app.settings.base_url + "/author"
 
 
-def button(page, text: str = "Про автора") -> ft.Button:
+def button(page, text: str) -> ft.Button:
     """Створює кнопку для переходу на сторінку "Про автора" """
     return ft.Button(
         text,
