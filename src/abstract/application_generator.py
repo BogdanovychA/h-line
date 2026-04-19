@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from models.appeal_request import AppealRequest
     from io import BytesIO
+    from fluent_manager import FluentManager
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, ClassVar, Type
@@ -28,7 +29,7 @@ class BaseTemplateManager(ABC):
     """Інтерфейс для менеджерів, що працюють з конкретними форматами шаблонів (Docx, Jinja2 тощо)"""
 
     @abstractmethod
-    def __init__(self, template_path: Path):
+    def __init__(self, template_path: Path, fluent: FluentManager):
         """Ініціалізація менеджера шаблонів."""
         pass
 
@@ -77,7 +78,7 @@ class GlobalGenerator(BaseGenerator):
         """Повертає тип файлу з налаштувань додатка."""
         return app.settings.template_file_type
 
-    def __init__(self) -> None:
+    def __init__(self, fluent: FluentManager) -> None:
         """Ініціалізація глобального генератора на основі налаштувань."""
 
         generator_class = self.get_generator_class(self.file_type)
@@ -85,6 +86,7 @@ class GlobalGenerator(BaseGenerator):
         self.creator: BaseTemplateManager = generator_class(
             app.settings.templates_dir
             / f"{app.settings.template_file_name}.{self.file_type}",
+            fluent=fluent,
         )
 
     def generate_application(self, request_data: AppealRequest) -> BytesIO | None:

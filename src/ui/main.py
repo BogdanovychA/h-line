@@ -59,7 +59,7 @@ async def build_main_view(
             try:
                 await box.storage.set("officer_name", name)
             except RuntimeError:
-                logger.exception("Помилка при записі officer_name")
+                logger.exception(box.fluent.get("log-error-write-officer-name"))
 
         position = officer_position_block.value.strip()
         if not position:
@@ -71,7 +71,7 @@ async def build_main_view(
             try:
                 await box.storage.set("officer_position", position)
             except RuntimeError:
-                logger.exception("Помилка при записі officer_position")
+                logger.exception(box.fluent.get("log-error-write-officer-position"))
 
         try:
             email = email_adapter.validate_python(officer_email_block.value)
@@ -80,7 +80,7 @@ async def build_main_view(
                 try:
                     await box.storage.set("officer_email", email)
                 except RuntimeError:
-                    logger.exception("Помилка при записі officer_email")
+                    logger.exception(box.fluent.get("log-error-write-officer-email"))
 
         except ValidationError:
             message_block.value = box.fluent.get("error-enter-email")
@@ -234,20 +234,26 @@ async def main(page: ft.Page):
         SMTPProtokol.SSL, smtp_implementations.SMTPSenderSSL
     )
 
+    fluent_mgr = FluentManager(
+        locales=["uk"],
+        locales_path=str(app.settings.locales_dir),
+        default_locale="uk",
+    )
+
     box = PandorasBox(
         storage=FletStorage(app.settings.name),
-        generator=application_generator.GlobalGenerator(),
+        generator=application_generator.GlobalGenerator(fluent=fluent_mgr),
         ga=MeasurementAPI(
             m10t_id=google_analytics.settings.id,
             secret_key=google_analytics.settings.secret_key,
         ),
         name_creator=application_name_creator.NameCreator(),
-        fluent=FluentManager(
-            locales=["uk"],
-            locales_path=str(app.settings.locales_dir),
-            default_locale="uk",
+        fluent=fluent_mgr,
+        saver=(
+            application_saver.FileSaver(fluent=fluent_mgr)
+            if app.settings.save_to_disk
+            else None
         ),
-        saver=application_saver.FileSaver() if app.settings.save_to_disk else None,
     )
 
     page.title = box.fluent.get("app-title")
@@ -259,7 +265,7 @@ async def main(page: ft.Page):
         if not await box.storage.contains_key("client_id"):
             await box.storage.set("client_id", box.client_id)
     except RuntimeError:
-        logger.exception("Помилка при зчитуванні даних про client_id")
+        logger.exception(box.fluent.get("log-error-read-client-id"))
         box.client_id = str(uuid.uuid4())
 
     try:
@@ -267,7 +273,7 @@ async def main(page: ft.Page):
         box.officer.position = await box.storage.get_or_default("officer_position", "")
         box.officer.email = await box.storage.get_or_default("officer_email", "")
     except RuntimeError:
-        logger.exception("Помилка при зчитуванні даних про офіцера")
+        logger.exception(box.fluent.get("log-error-read-officer-data"))
         (
             box.officer.name,
             box.officer.position,

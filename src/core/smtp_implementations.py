@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from core.email_manager import EmailMessage
+    from fluent_manager import FluentManager
 
 import smtplib
 from abc import ABC, abstractmethod
@@ -29,12 +30,14 @@ class SMTPSenderBase(ABC):
         port: int,
         email: str,
         password: str,
+        fluent: FluentManager,
     ) -> None:
         """Ініціалізує параметри підключення до сервера."""
         self.server = server
         self.port = port
         self.email = email
         self.password = password
+        self.fluent = fluent
 
     @abstractmethod
     def _get_connection(self):
@@ -53,10 +56,14 @@ class SMTPSenderBase(ABC):
                 server.login(self.email, self.password)
                 server.send_message(message)
 
-                logger.info(f"Лист успішно відправлено на {message['To']}")
+                logger.info(self.fluent.get("log-info-email-sent", to=message["To"]))
 
         except Exception as e:
-            logger.exception(f"Критична помилка SMTP ({self.__class__.__name__})")
+            logger.exception(
+                self.fluent.get(
+                    "log-error-smtp-critical", protocol=self.__class__.__name__
+                )
+            )
             raise EmailSendError(f"Не вдалося відправити лист: {e}")
 
 

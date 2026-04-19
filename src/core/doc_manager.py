@@ -13,21 +13,22 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from models.appeal_request import AppealRequest
     from pathlib import Path
+    from fluent_manager import FluentManager
 
 from docxtpl import DocxTemplate
 
-logger = logging.getLogger(__name__)
-
-
 from abstract.application_generator import BaseTemplateManager
+
+logger = logging.getLogger(__name__)
 
 
 class DocManager(BaseTemplateManager):
     """Менеджер для генерації DOCX-файлів на основі шаблонів."""
 
-    def __init__(self, template_path: Path):
+    def __init__(self, template_path: Path, fluent: FluentManager):
         """Ініціалізує менеджер шляхом до шаблону."""
         self.template = template_path
+        self.fluent = fluent
 
     def generate_application(self, request_data: AppealRequest) -> BytesIO | None:
         """Генерує файл звернення у форматі DOCX."""
@@ -44,5 +45,5 @@ class DocManager(BaseTemplateManager):
             return buffer
 
         except Exception:
-            logger.exception("Помилка при генерації файлу")
+            logger.exception(self.fluent.get("log-error-generate-file"))
             return None

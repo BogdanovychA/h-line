@@ -58,6 +58,7 @@ class EmailSender(BaseSender):
             email_sender.settings.port,
             email_sender.settings.email,
             email_sender.settings.password,
+            fluent=fluent,
         )
 
         self.manager = EmailManager(protokol)
