@@ -6,7 +6,6 @@
 .gitignore
 .dockerignore
 .pre-commit-config.yaml
-CITATION.cff
 
 ### Docs & Info (not needed in container)
 docs/
@@ -16,6 +15,7 @@ LICENSE
 NOTICE
 SECURITY.md
 CONTRIBUTING.md
+CITATION.cff
 
 ### IDEs
 .idea/
@@ -31,8 +31,6 @@ __pypackages__/
 src/assets/.env
 *.env
 *.env.*
-!.env.example
-!src/assets/.env.example
 
 ### Python-generated files
 **/__pycache__/
@@ -58,6 +56,9 @@ src/assets/output/*
 #
 src/assets/templates/*
 !src/assets/templates/.gitkeep
+#
+src/assets/locales/*
+!src/assets/locales/.gitkee
 #
 bin/
 src/temp/
