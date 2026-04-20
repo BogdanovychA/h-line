@@ -55,6 +55,10 @@ docker_data/output/*
 !docker_data/templates/
 docker_data/templates/*
 !docker_data/templates/.gitkeep
+#
+!docker_data/locales/
+docker_data/locales/*
+!docker_data/locales/.gitkeep
 
 #
 **/*.tmp

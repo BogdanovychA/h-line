@@ -235,9 +235,9 @@ async def main(page: ft.Page):
     )
 
     fluent_mgr = FluentManager(
-        locales=["uk"],
+        locales=[app.settings.default_locale],
         locales_path=str(app.settings.locales_dir),
-        default_locale="uk",
+        default_locale=app.settings.default_locale,
     )
 
     box = PandorasBox(
