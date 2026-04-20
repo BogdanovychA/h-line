@@ -46,7 +46,7 @@ def create_file_name(file_type: FileType) -> str:
     return file_name
 
 
-def create_path_dir(output_dir: Path, fluent: FluentManager | None = None) -> Path:
+def create_path_dir(output_dir: Path, fluent: FluentManager) -> Path:
     """Створює структуру каталогів на основі поточної дати (рік/місяць/день)."""
 
     now = datetime.now()
@@ -62,9 +62,7 @@ def create_path_dir(output_dir: Path, fluent: FluentManager | None = None) -> Pa
         raise PermissionError
 
 
-def create_path(
-    output_dir: Path, file_type: FileType, fluent: FluentManager | None = None
-) -> Path:
+def create_path(output_dir: Path, file_type: FileType, fluent: FluentManager) -> Path:
     """Створює повний шлях до нового файлу звернення."""
 
     dir_name = create_path_dir(output_dir, fluent=fluent)
@@ -73,7 +71,7 @@ def create_path(
     return dir_name / file_name
 
 
-def file_to_buffer(file_path: Path, fluent: FluentManager | None = None) -> BytesIO:
+def file_to_buffer(file_path: Path, fluent: FluentManager) -> BytesIO:
     """Зчитує файл у буфер BytesIO."""
 
     if not file_path.is_file():
@@ -86,9 +84,7 @@ def file_to_buffer(file_path: Path, fluent: FluentManager | None = None) -> Byte
     return buffer
 
 
-def save(
-    buffer: BytesIO | None, path: Path, fluent: FluentManager | None = None
-) -> Path | None:
+def save(buffer: BytesIO | None, path: Path, fluent: FluentManager) -> Path | None:
     """Зберігає вміст буфера у файл за вказаним шляхом."""
     if buffer is None:
         msg = fluent.get("log-error-buffer-is-none")
@@ -110,4 +106,3 @@ def save(
         msg = fluent.get("log-error-save-file")
         logger.exception(msg)
         return None
-

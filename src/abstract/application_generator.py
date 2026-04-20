@@ -68,7 +68,7 @@ class GlobalGenerator(BaseGenerator):
 
     @classmethod
     def get_generator_class(
-        cls, file_type: FileType, fluent: FluentManager | None = None
+        cls, file_type: FileType, fluent: FluentManager
     ) -> Type[BaseTemplateManager]:
         """Повертає зареєстрований клас генератора або викидає помилку."""
         if file_type not in cls._REGISTRY:
