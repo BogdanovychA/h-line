@@ -7,4 +7,3 @@
 from config import app
 
 ROUTE = app.settings.base_url + "/"
-TITLE = "Гаряча лінія Держенергонагляду (H-Line)"

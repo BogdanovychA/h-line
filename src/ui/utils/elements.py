@@ -12,10 +12,10 @@ from ui.routes import root
 from ui.utils import style
 
 
-def back_button(page) -> ft.Button:
+def back_button(page, text: str) -> ft.Button:
     """Створює кнопку для повернення на головну сторінку"""
     return ft.Button(
-        "Назад",
+        text,
         icon=ft.Icons.ARROW_BACK,
         on_click=lambda: asyncio.create_task(page.push_route(root.ROUTE)),
     )

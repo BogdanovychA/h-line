@@ -21,15 +21,13 @@ from models.appeal_request import AppealRequest, email_adapter, phone_adapter
 from models.email_errors import EmailFileNotFoundError, EmailSendError
 from ui.utils import elements, style
 
-TITLE = "Фіксація звернення"
-
 ROUTE = app.settings.base_url + "/application"
 
 
-def button(page) -> ft.Button:
+def button(page, text: str) -> ft.Button:
     """Створює кнопку для переходу до фіксації звернення"""
     return ft.Button(
-        TITLE,
+        text,
         on_click=lambda: asyncio.create_task(page.push_route(ROUTE)),
     )
 
@@ -57,13 +55,13 @@ async def build_view(
 
         applicant_name = applicant_name_block.value.strip()
         if not applicant_name:
-            message_block.value = "Введіть ПІБ громадянина"
+            message_block.value = box.fluent.get("error-enter-name")
             message_block.update()
             return
 
         applicant_address = applicant_address_block.value.strip()
         if not applicant_address:
-            message_block.value = "Введіть адресу громадянина"
+            message_block.value = box.fluent.get("error-enter-address")
             message_block.update()
             return
 
@@ -73,7 +71,7 @@ async def build_view(
                 applicant_telephone = phone_adapter.validate_python(applicant_telephone)
 
             except ValidationError:
-                message_block.value = "Введіть коректний телефон"
+                message_block.value = box.fluent.get("error-enter-phone")
                 message_block.update()
                 return
 
@@ -83,13 +81,13 @@ async def build_view(
                 applicant_email = email_adapter.validate_python(applicant_email)
 
             except ValidationError:
-                message_block.value = "Введіть коректний email"
+                message_block.value = box.fluent.get("error-enter-email")
                 message_block.update()
                 return
 
         appeal_content = appeal_content_block.value.strip()
         if not appeal_content:
-            message_block.value = "Введіть текст звернення"
+            message_block.value = box.fluent.get("error-enter-content")
             message_block.update()
             return
 
@@ -97,7 +95,7 @@ async def build_view(
             applicant_category_switcher.value
             == applicant_category_switcher_options[0].text
         ):
-            message_block.value = "Оберіть категорію"
+            message_block.value = box.fluent.get("error-select-category")
             message_block.update()
             return
 
@@ -105,7 +103,7 @@ async def build_view(
             applicant_social_status_switcher.value
             == applicant_social_status_switcher_options[0].text
         ):
-            message_block.value = "Оберіть соціальний стан"
+            message_block.value = box.fluent.get("error-select-social-status")
             message_block.update()
             return
 
@@ -122,7 +120,7 @@ async def build_view(
                 officer_name=officer_name,
             )
         except ValidationError as e:
-            message_block.value = f"Помилка при створенні звернення: {str(e)}"
+            message_block.value = box.fluent.get("error-create-appeal", error=str(e))
             message_block.update()
             return
 
@@ -132,7 +130,7 @@ async def build_view(
             buffer = await asyncio.to_thread(box.generator.generate_application, appeal)
 
             if buffer is None:
-                message_block.value = "Помилка при створенні звернення..."
+                message_block.value = box.fluent.get("error-generate-application")
                 message_block.update()
                 return
 
@@ -142,11 +140,11 @@ async def build_view(
                 try:
                     await asyncio.to_thread(box.sender.send, buffer, file_name)
                 except EmailFileNotFoundError:
-                    message_block.value = "Помилка при створенні email..."
+                    message_block.value = box.fluent.get("error-create-email")
                     message_block.update()
                     return
                 except EmailSendError:
-                    message_block.value = "Помилка при надсиланні email..."
+                    message_block.value = box.fluent.get("error-send-email")
                     message_block.update()
                     return
 
@@ -154,7 +152,7 @@ async def build_view(
                 try:
                     box.saver.save(buffer, file_name)
                 except PermissionError:
-                    message_block.value = "Помилка при збереженні файлу..."
+                    message_block.value = box.fluent.get("error-save-file")
                     message_block.update()
                     return
 
@@ -166,7 +164,7 @@ async def build_view(
             )
 
             await _clear()
-            message_block.value = "Звернення зафіксовано! Можна фіксувати наступне."
+            message_block.value = box.fluent.get("success-appeal-fixed")
             message_block.update()
 
         finally:
@@ -196,61 +194,54 @@ async def build_view(
         )
         applicant_social_status_switcher.update()
 
-    page.title = TITLE
+    page.title = box.fluent.get("application-title")
 
     message_block = ft.Text(
-        default_message_text := "Введіть інформацію",
+        default_message_text := box.fluent.get("default-message-text"),
         size=style.settings.text_size,
     )
 
-    appeal_content_block_default_value = """Суть звернення:
-
-Чи звертався громадянин до ОСР, місцевої влади, керуючої компанії тощо:
-
-Якщо так, який результат:
-
-Що громадянин просить у Держенергонагляду:
-"""
+    appeal_content_block_default_value = box.fluent.get("appeal-content-default")
 
     applicant_block = [
         applicant_name_block := ft.TextField(
-            label="ПІБ громадянина *",
+            label=box.fluent.get("applicant-name"),
             value="",
-            hint_text="Прізвище, ім'я, по батькові",
+            hint_text=box.fluent.get("applicant-name-hint"),
             width=400,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
         ),
         applicant_address_block := ft.TextField(
-            label="Адреса проживання громадянина *",
+            label=box.fluent.get("applicant-address"),
             value="",
-            hint_text="01001, м. Київ, вулиця Хрещатик, буд. 1",
+            hint_text=box.fluent.get("applicant-address-hint"),
             width=400,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
         ),
         applicant_telephone_block := ft.TextField(
-            label="Номер телефону громадянина",
+            label=box.fluent.get("applicant-telephone"),
             value="",
-            hint_text="+380441234567",
+            hint_text=box.fluent.get("applicant-telephone-hint"),
             keyboard_type=ft.KeyboardType.PHONE,
             width=400,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
         ),
         applicant_email_block := ft.TextField(
-            label="Електронна пошта громадянина",
+            label=box.fluent.get("applicant-email"),
             value="",
-            hint_text="example@domain.com",
+            hint_text=box.fluent.get("applicant-email-hint"),
             keyboard_type=ft.KeyboardType.EMAIL,
             width=400,
             bgcolor=style.settings.form_bg_color,
             border_color=style.settings.form_border_color,
         ),
         appeal_content_block := ft.TextField(
-            label="Зміст звернення громадянина",
+            label=box.fluent.get("appeal-content"),
             value=appeal_content_block_default_value,
-            hint_text="Опишіть суть звернення громадянина...",
+            hint_text=box.fluent.get("appeal-content-hint"),
             multiline=True,
             min_lines=3,
             max_lines=10,
@@ -260,47 +251,47 @@ async def build_view(
         ),
     ]
 
-    def _create_switcher_options(options_value: list[str]) -> list[ft.DropdownOption]:
+    def _create_switcher_options(options_keys: list[str]) -> list[ft.DropdownOption]:
         """Створює список опцій для випадаючого меню."""
 
         options = [
-            ft.DropdownOption(text="Не обрано"),
+            ft.DropdownOption(text=box.fluent.get("not-selected")),
         ]
 
-        for o in options_value:
-            options.append(ft.DropdownOption(text=o))
+        for k in options_keys:
+            options.append(ft.DropdownOption(text=box.fluent.get(k)))
 
         return options
 
     applicant_category_switcher_options = _create_switcher_options(
         [
-            "Учасник війни",
-            "Дитина з інвалідністю",
-            "Одинока мати",
-            "Мати-героїня",
-            "Багатодітна сім'я",
-            "Особа, що потерпіла від Чорнобильської катастрофи",
-            "Внутрішньо переміщена особа",
-            "Учасник ліквідації наслідків аварії на Чорнобильській АЕС",
-            "Герой України",
-            "Герой Радянського Союзу",
-            "Герой Соціалістичної Праці",
-            "Дитина",
-            "Дитина війни",
-            "Особа з інвалідністю внаслідок Другої світової війни",
-            "Особа з інвалідністю внаслідок війни",
-            "Учасник бойових дій",
-            "Ветеран військової служби",
-            "Ветеран праці",
-            "Особа з інвалідністю I групи",
-            "Особа з інвалідністю II групи",
-            "Особа з інвалідністю III групи",
-            "Інші категорії",
+            "cat-war-participant",
+            "cat-disabled-child",
+            "cat-single-mother",
+            "cat-mother-heroine",
+            "cat-large-family",
+            "cat-chernobyl-victim",
+            "cat-vpo",
+            "cat-chernobyl-liquidator",
+            "cat-hero-ukraine",
+            "cat-hero-soviet",
+            "cat-hero-socialist",
+            "cat-child",
+            "cat-child-war",
+            "cat-disabled-ww2",
+            "cat-disabled-war",
+            "cat-combat-participant",
+            "cat-veteran-military",
+            "cat-veteran-labor",
+            "cat-disabled-1",
+            "cat-disabled-2",
+            "cat-disabled-3",
+            "cat-other",
         ]
     )
 
     applicant_category_switcher = ft.Dropdown(
-        label="Категорія громадянина *",
+        label=box.fluent.get("applicant-category-label"),
         label_style=ft.TextStyle(size=style.settings.text_size),
         value=applicant_category_switcher_options[0].text,
         options=applicant_category_switcher_options,
@@ -310,25 +301,25 @@ async def build_view(
 
     applicant_social_status_switcher_options = _create_switcher_options(
         [
-            "Пенсіонер",
-            "Пенсіонер з числа військовослужбовців",
-            "Служитель релігійної організації",
-            "Журналіст",
-            "Особа, що позбавлена волі; особа, воля якої обмежена",
-            "Робітник",
-            "Селянин",
-            "Працівник бюджетної сфери",
-            "Державний службовець",
-            "Військовослужбовець",
-            "Підприємець",
-            "Безробітний",
-            "Учень, студент",
-            "Інші",
+            "status-pensioner",
+            "status-pensioner-military",
+            "status-religious",
+            "status-journalist",
+            "status-prisoner",
+            "status-worker",
+            "status-peasant",
+            "status-budget-worker",
+            "status-civil-servant",
+            "status-military",
+            "status-entrepreneur",
+            "status-unemployed",
+            "status-student",
+            "status-other",
         ]
     )
 
     applicant_social_status_switcher = ft.Dropdown(
-        label="Соціальний стан громадянина *",
+        label=box.fluent.get("applicant-social-status-label"),
         label_style=ft.TextStyle(size=style.settings.text_size),
         value=applicant_social_status_switcher_options[0].text,
         options=applicant_social_status_switcher_options,
@@ -345,14 +336,14 @@ async def build_view(
         scroll=ft.ScrollMode.ADAPTIVE,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            elements.app_bar(TITLE),
+            elements.app_bar(box.fluent.get("application-title")),
             ft.Text(""),
             message_block,
             ft.Text(""),
             *applicant_block,
             applicant_category_switcher,
             applicant_social_status_switcher,
-            ft.Text("* — обов'язкові поля"),
+            ft.Text(box.fluent.get("required-fields")),
             ft.Text(""),
             ft.Row(
                 buttons_block := [
@@ -362,8 +353,15 @@ async def build_view(
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
             ft.Text(""),
-            ft.Text(f"Ваші дані: {officer_name}; {officer_position}; {officer_email}"),
+            ft.Text(
+                box.fluent.get(
+                    "officer-data",
+                    name=officer_name,
+                    position=officer_position,
+                    email=officer_email,
+                )
+            ),
             ft.Text(""),
-            elements.back_button(page),
+            elements.back_button(page, box.fluent.get("back")),
         ],
     )

@@ -23,5 +23,13 @@ This product includes software developed by:
    Licensed under the GNU Lesser General Public License v2.1 (LGPLv2.1).
    Copyright (c) 2015 Eric Lapouyade.
 
+6. fluent.runtime (https://pypi.org/project/fluent.runtime/)
+   Licensed under the Apache License 2.0.
+   Copyright 2016 Mozilla Foundation
+
+7. fluent-manager (https://pypi.org/project/fluent-manager/)
+   Licensed under the MIT License.
+   Copyright (c) 2026 Andrii Bogdanovych.
+
 This software is developed as an open-source initiative aimed at
 the digital transformation of citizen appeal processes in Ukraine.

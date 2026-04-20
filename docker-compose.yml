@@ -14,5 +14,6 @@ services:
     volumes:
       - ./docker_data/output:/app/src/assets/output
       - ./docker_data/templates:/app/src/assets/templates
+      - ./docker_data/locales:/app/src/assets/locales
     ports:
       - "8081:8080"

@@ -7,6 +7,8 @@
 from email.message import EmailMessage
 from io import BytesIO
 
+from fluent_manager import FluentManager
+
 from utils import emails
 
 
@@ -15,12 +17,14 @@ class AppealMessageFactory:
 
     def __init__(
         self,
+        fluent: FluentManager,
         sender_email: str,
         recipient_list: list[str],
         cc_recipients: list[str] | None = None,
         bcc_recipients: list[str] | None = None,
     ) -> None:
         """Ініціалізація фабрики повідомлень параметрами відправника та одержувачів."""
+        self.fluent = fluent
         self.sender_email = sender_email
         self.to_str = ", ".join(recipient_list)
         self.cc_str = ", ".join(cc_recipients) if cc_recipients else None
@@ -30,20 +34,17 @@ class AppealMessageFactory:
         """Створює об'єкт EmailMessage з вкладенням із буфера."""
         msg = EmailMessage()
 
-        msg['Subject'] = f"Звернення на гарячу лінію: {file_name}"
-        msg['From'] = self.sender_email
-        msg['To'] = self.to_str
+        msg["Subject"] = self.fluent.get("email-subject", filename=file_name)
+        msg["From"] = self.sender_email
+        msg["To"] = self.to_str
 
         if self.cc_str:
-            msg['Cc'] = self.cc_str
+            msg["Cc"] = self.cc_str
 
         if self.bcc_str:
-            msg['Bcc'] = self.bcc_str
+            msg["Bcc"] = self.bcc_str
 
-        msg.set_content(
-            f'Звернення на "гарячу лінію" Держенергонагляду у додатку до цього листа.\n\n'
-            f"Назва файлу: {file_name}"
-        )
+        msg.set_content(self.fluent.get("email-body", filename=file_name))
 
         emails.add_attachment_from_buffer(msg, buffer, file_name)
 

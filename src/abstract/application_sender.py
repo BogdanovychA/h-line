@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from io import BytesIO
 
+    from fluent_manager import FluentManager
+
 from abc import ABC, abstractmethod
 
 from config import email_recipient, email_sender
@@ -31,7 +33,10 @@ class EmailSender(BaseSender):
     """Клас для відправки звернень електронною поштою."""
 
     def __init__(
-        self, cc_recipients: list | None = None, bcc_recipients: list | None = None
+        self,
+        fluent: FluentManager,
+        cc_recipients: list | None = None,
+        bcc_recipients: list | None = None,
     ):
         """Ініціалізація відправника електронної пошти з налаштуваннями SMTP та одержувачів."""
 
@@ -39,19 +44,23 @@ class EmailSender(BaseSender):
         bcc = bcc_recipients or []
 
         self.message_factory = AppealMessageFactory(
+            fluent=fluent,
             sender_email=email_sender.settings.email,
             recipient_list=[email_recipient.settings.to],
             cc_recipients=[email_recipient.settings.cc, *cc],
             bcc_recipients=[email_recipient.settings.bcc, *bcc],
         )
 
-        protokol_class = EmailManager.get_protokol_class(email_sender.settings.protokol)
+        protokol_class = EmailManager.get_protokol_class(
+            email_sender.settings.protokol, fluent=fluent
+        )
 
         protokol = protokol_class(
             email_sender.settings.server,
             email_sender.settings.port,
             email_sender.settings.email,
             email_sender.settings.password,
+            fluent=fluent,
         )
 
         self.manager = EmailManager(protokol)

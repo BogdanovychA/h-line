@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from io import BytesIO
+    from fluent_manager import FluentManager
 
 from abc import ABC, abstractmethod
 
@@ -29,15 +30,16 @@ class BaseSaver(ABC):
 class FileSaver(BaseSaver):
     """Клас для збереження звернень у файлову систему."""
 
-    def __init__(self) -> None:
+    def __init__(self, fluent: FluentManager) -> None:
         """Ініціалізація збережувача з директорією виводу."""
         self.output_dir = app.settings.output_dir
+        self.fluent = fluent
 
     def save(self, buffer: BytesIO, file_name: str) -> None:
         """Зберігає буфер у файл у вказаній директорії."""
-        dir_name = files.create_path_dir(self.output_dir)
+        dir_name = files.create_path_dir(self.output_dir, fluent=self.fluent)
         path = dir_name / file_name
 
         buffer.seek(0)
-        files.save(buffer, path)
+        files.save(buffer, path, fluent=self.fluent)
         buffer.seek(0)
