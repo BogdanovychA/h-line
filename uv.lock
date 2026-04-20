@@ -412,14 +412,14 @@ wheels = [
 
 [[package]]
 name = "fluent-manager"
-version = "1.0.1"
+version = "1.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fluent-runtime" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/55/c8/bc2fa75f3c54ea9817e022d4243817596c76e92d7a55df65c5ff3ac46bf5/fluent_manager-1.0.1.tar.gz", hash = "sha256:8dfbacc1f78167e0184175f4caa9387d8a98dc97d1565745de4f9d3e6097d770", size = 4235, upload-time = "2026-04-17T08:37:45.721Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c6/d7/e5e3c3a714bfb625945e9cc3f82512d45ece439d19da5a00d6d0ef9ddf77/fluent_manager-1.0.2.tar.gz", hash = "sha256:4269804e8321b916510c1b0eaca3433dabaca92ad6f5b4725a933b24019b5607", size = 4463, upload-time = "2026-04-20T11:02:28.08Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4e/83/03abd71aa67ad0f7858e8c9889ab1e9a877143d5a5efe46ef43af8971b4e/fluent_manager-1.0.1-py3-none-any.whl", hash = "sha256:72aaca8d3371546f439da53a16829d3771821ef5687ab5efe90a850668800e72", size = 4553, upload-time = "2026-04-17T08:37:44.762Z" },
+    { url = "https://files.pythonhosted.org/packages/fd/ed/f2e24db2c28fbcd358505e8ce7d1e267bde947eb986167c33e59551aeebc/fluent_manager-1.0.2-py3-none-any.whl", hash = "sha256:24781ef9c41ce4da917fb4eeb1e1b173b7869bf7bda09d5370cb413a1a462400", size = 4753, upload-time = "2026-04-20T11:02:26.912Z" },
 ]
 
 [[package]]
@@ -487,7 +487,7 @@ requires-dist = [
     { name = "flet-desktop", specifier = "==0.84.0" },
     { name = "flet-storage", specifier = "==1.1.3" },
     { name = "flet-web", specifier = "==0.84.0" },
-    { name = "fluent-manager", specifier = "==1.0.1" },
+    { name = "fluent-manager", specifier = "==1.0.2" },
     { name = "httpx", specifier = "==0.28.1" },
     { name = "jinja2", specifier = "==3.1.6" },
     { name = "phonenumbers", specifier = "==9.0.28" },
