@@ -174,9 +174,6 @@ async def build_view(
 
         await _clear()
 
-        appeal_content_block.value = appeal_content_block_default_value
-        appeal_content_block.update()
-
         message_block.value = default_message_text
         message_block.update()
 
@@ -185,6 +182,9 @@ async def build_view(
         for block in applicant_block:
             block.value = ""
             block.update()
+
+        appeal_content_block.value = appeal_content_block_default_value
+        appeal_content_block.update()
 
         applicant_category_switcher.value = applicant_category_switcher_options[0].text
         applicant_category_switcher.update()
