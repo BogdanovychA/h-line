@@ -4,10 +4,15 @@
 # Licensed under the EUPL-1.2 or later
 # See the LICENSE file in the project root for more information.
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from fluent_manager import FluentManager
+
 from email.message import EmailMessage
 from io import BytesIO
-
-from fluent_manager import FluentManager
 
 from utils import emails
 
