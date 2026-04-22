@@ -1,5 +1,5 @@
 # Main titles
-app-title = Гаряча лінія Держенергонагляду (H-Line)
+app-title = "Гаряча лінія" Держенергонагляду (H-Line)
 application-title = Фіксація звернення
 
 # Form fields
