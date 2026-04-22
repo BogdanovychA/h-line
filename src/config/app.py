@@ -36,7 +36,8 @@ class Settings(BaseSettings):
     output_dir: Path = assets_dir / "output"
     locales_dir: Path = assets_dir / "locales"
 
-    default_locale: str = "uk"
+    start_locale: str = "uk"
+    default_locale: str = "en"
 
     send_to_email: bool = True
     save_to_disk: bool = False

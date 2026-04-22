@@ -235,7 +235,7 @@ async def main(page: ft.Page):
     )
 
     fluent_mgr = FluentManager(
-        locales=[app.settings.default_locale],
+        locales=[app.settings.start_locale],
         locales_path=str(app.settings.locales_dir),
         default_locale=app.settings.default_locale,
     )
