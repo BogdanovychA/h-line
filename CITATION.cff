@@ -5,9 +5,9 @@ authors:
     given-names: "Andrii"
     orcid: "https://orcid.org/0009-0006-9045-5675"
 title: "h-line"
-version: 1.1.0
+version: 1.2.0
 abstract: "Open-source hotline automation tool for processing citizen appeals in the Ukrainian public sector."
 repository-code: "https://github.com/BogdanovychA/h-line"
 license: EUPL-1.2
 doi: 10.5281/zenodo.19590690
-date-released: 2026-04-20
+date-released: 2026-04-22
