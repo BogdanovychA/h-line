@@ -37,7 +37,7 @@ def build_view(page: ft.Page, box: PandorasBox) -> ft.View:
         scroll=ft.ScrollMode.ADAPTIVE,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            elements.app_bar(box.fluent.get("about-title")),
+            elements.app_bar(box.fluent.get("about-title"), page),
             ft.Text("H-Line", size=style.settings.text_size),
             ft.Text(box.fluent.get("version", version=app.settings.version)),
             ft.Text(box.fluent.get("license", license=app.settings.license)),

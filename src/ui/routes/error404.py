@@ -27,7 +27,7 @@ def build_view(page: ft.Page, box: PandorasBox) -> ft.View:
         scroll=ft.ScrollMode.ADAPTIVE,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            elements.app_bar(box.fluent.get("error-404-title")),
+            elements.app_bar(box.fluent.get("error-404-title"), page),
             ft.Text(""),
             ft.Text(box.fluent.get("error-404-title"), size=style.settings.text_size),
             ft.Text(box.fluent.get("target-page", route=page.route)),

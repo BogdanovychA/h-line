@@ -21,11 +21,20 @@ def back_button(page, text: str) -> ft.Button:
     )
 
 
-def app_bar(title) -> ft.AppBar:
+def app_bar(title, page) -> ft.AppBar:
     """Створює панель застосунку (AppBar) з вказаним заголовком"""
+
+    from ui.routes import settings
+
     return ft.AppBar(
         title=ft.Text(title, size=style.settings.title_size, weight=ft.FontWeight.BOLD),
         center_title=True,
+        actions=[
+            ft.IconButton(
+                ft.Icons.MENU,
+                on_click=lambda: asyncio.create_task(page.push_route(settings.ROUTE)),
+            ),
+        ],
         bgcolor=ft.Colors.SURFACE_CONTAINER,
     )
 

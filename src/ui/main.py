@@ -26,7 +26,7 @@ from core.txt_manager import TxtManager
 from models.appeal_request import email_adapter
 from models.file_type import FileType
 from models.smtp import SMTPProtokol
-from ui.routes import about, application, author, error404, root
+from ui.routes import about, application, author, error404, root, settings
 from ui.utils import elements, style
 from ui.utils.models import Officer, PandorasBox
 from utils.measurement_api import MeasurementAPI
@@ -153,7 +153,7 @@ async def build_main_view(
         scroll=ft.ScrollMode.ADAPTIVE,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            elements.app_bar(box.fluent.get("app-title")),
+            elements.app_bar(box.fluent.get("app-title"), page),
             # ft.Text(""),
             ft.Image(
                 src="/images/logo-sies-317x312.png",
@@ -207,6 +207,8 @@ async def main(page: ft.Page):
                 page.views.append(author.build_view(page, box))
             case about.ROUTE:
                 page.views.append(about.build_view(page, box))
+            case settings.ROUTE:
+                page.views.append(await settings.build_view(page, box))
             case _:
                 if page.route != root.ROUTE:
                     page.views.append(error404.build_view(page, box))

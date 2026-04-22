@@ -37,7 +37,7 @@ def build_view(page: ft.Page, box: PandorasBox) -> ft.View:
         scroll=ft.ScrollMode.ADAPTIVE,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            elements.app_bar(box.fluent.get("author-title")),
+            elements.app_bar(box.fluent.get("author-title"), page),
             ft.Text(box.fluent.get("author-name"), size=style.settings.text_size),
             ft.Text(""),
             ft.Image(

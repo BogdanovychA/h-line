@@ -336,7 +336,7 @@ async def build_view(
         scroll=ft.ScrollMode.ADAPTIVE,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
-            elements.app_bar(box.fluent.get("application-title")),
+            elements.app_bar(box.fluent.get("application-title"), page),
             ft.Text(""),
             message_block,
             ft.Text(""),
