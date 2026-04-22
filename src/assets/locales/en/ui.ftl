@@ -110,6 +110,10 @@ author-name = Andrii BOHDANOVYCH
 home-page = Home page
 other-apps = Other author's apps
 
+# Settings view
+settings-title = Settings
+settings-lang-switch = Select interface language
+
 # Error 404
 error-404-title = Page not found
 target-page = Target page: {$route}

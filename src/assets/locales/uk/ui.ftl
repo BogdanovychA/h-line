@@ -110,6 +110,10 @@ author-name = Андрій БОГДАНОВИЧ
 home-page = Домашня сторінка
 other-apps = Інші застосунки автора
 
+# Settings view
+settings-title = Налаштування
+settings-lang-switch = Оберіть мову інтерфейсу
+
 # Error 404
 error-404-title = Сторінка не знайдена
 target-page = Цільова сторінка: {$route}
