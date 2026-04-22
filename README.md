@@ -78,7 +78,7 @@ docker-compose up -d
    ```python
    EmailManager.register(SMTPProtokol.CUSTOM, MyCustomSender)
    ```
-   3. **Додавання нової мови:** Створіть новий каталог в `src/assets/locales/` (наприклад, `en/`) та додайте файли `ui.ftl`, `mail.ftl` та `logs.ftl`.
+   3. **Додавання нової мови:** Створіть новий каталог в `src/assets/locales/` (наприклад, `en/`) та додайте файли `ui.ftl`, `mail.ftl` та `logs.ftl`. Додана мова підтягнеться автоматично.
 
 ---
 
