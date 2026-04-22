@@ -106,7 +106,7 @@ version = Version: {$version}
 license = License: {$license}
 github = GitHub
 sies = State Energy Supervision
-author-name = Andrii BOHDANOVYCH
+author-name = Andrii BOGDANOVYCH
 home-page = Home page
 other-apps = Other author's apps
 
