@@ -86,7 +86,7 @@ async def build_view(
                 return
 
         appeal_content = appeal_content_block.value.strip()
-        if not appeal_content:
+        if not appeal_content or appeal_content == appeal_content_block_default_value:
             message_block.value = box.fluent.get("error-enter-content")
             message_block.update()
             return
