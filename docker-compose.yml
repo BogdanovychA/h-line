@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: flet_h-line:latest
-    pull_policy: build
+    image: flet_h-line:${APP_VERSION}
+    pull_policy: missing
     container_name: flet_h-line_app
     restart: always
     env_file:
