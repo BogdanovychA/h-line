@@ -26,6 +26,7 @@ The project adheres to **SOLID** and **DRY** principles.
 - **Modularity**: New file types or email protocols can be added by implementing base classes and registering them in `src/ui/main.py`.
 
 ## 📂 Key Directory Structure
+- `.env`: Root environment file for Docker Compose (contains `APP_VERSION`).
 - `src/main.py`: Main entry point.
 - `src/ui/`: UI components and routing.
     - `main.py`: UI initialization and Registry setup.
@@ -55,10 +56,13 @@ Files:
 3. **Localization First**: NEVER hardcode strings in the UI. Always add a key to `ui.ftl` and use `box.fluent.get("key")`.
 4. **Validation**: Use Pydantic models for data validation, especially for form inputs.
 5. **Security**: Do not leak SMTP credentials. Use `.env` via `pydantic-settings`.
-6. **Project Structure**: Follow the existing `abstract` -> `core`/`models` -> `ui` flow.
+6. **Container Versioning**: For Docker deployments, ensure `APP_VERSION` is defined in the root `.env` file. This version tags the Docker image to prevent conflicts and ensure reproducible builds.
+7. **Deployment Policy**: Use `pull_policy: missing` in `docker-compose.yml` to prioritize local builds of specific versions over automatic re-builds or pulls.
+8. **Project Structure**: Follow the existing `abstract` -> `core`/`models` -> `ui` flow.
 
 ## 🛠 Useful Commands
 - `uv run flet run`: Run as desktop app.
 - `uv run flet run --web`: Run as web app.
+- `docker-compose up -d --build`: Rebuild and start containers.
 - `pytest`: Run tests.
 - `black . && isort .`: Format code.
