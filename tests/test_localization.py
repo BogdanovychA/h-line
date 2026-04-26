@@ -26,7 +26,7 @@ def fluent():
 
 def test_ui_localization(fluent):
     """Перевірка локалізації інтерфейсу."""
-    assert fluent.get("app-title") == "Гаряча лінія Держенергонагляду (H-Line)"
+    assert fluent.get("app-title") == '"Гаряча лінія" Держенергонагляду (H-Line)'
     assert fluent.get("application-title") == "Фіксація звернення"
     assert fluent.get("back") == "Назад"
 

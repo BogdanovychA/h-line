@@ -69,6 +69,9 @@ build-backend = "setuptools.build_meta"
 "DOI" = "https://doi.org/10.5281/zenodo.19590690"
 "Bug Tracker" = "https://github.com/BogdanovychA/h-line/issues"
 
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
 [tool.black]
 line-length = 88
 target-version = ['py312']
