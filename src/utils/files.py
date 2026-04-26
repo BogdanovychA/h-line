@@ -106,3 +106,6 @@ def save(buffer: BytesIO | None, path: Path, fluent: FluentManager) -> Path | No
         msg = fluent.get("log-error-save-file")
         logger.exception(msg)
         return None
+
+    finally:
+        buffer.seek(0)
