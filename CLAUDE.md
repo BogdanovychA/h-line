@@ -61,3 +61,38 @@ Same pattern for SMTP protocols via `EmailManager.register(SMTPProtokol.X, MyCla
 **Docker versioning** — `APP_VERSION` in the root `.env` tags the image. `pull_policy: missing` means the image is never auto-pulled or rebuilt if it already exists locally; use `--build` explicitly when you want a new build.
 
 **No database** — persistence is client-side only via `FletStorage` (SharedPreferences wrapper). Stored keys: `client_id`, `officer_name`, `officer_position`, `officer_email`.
+
+## Testing
+
+The project has 38 tests covering core functionality:
+
+**`tests/test_appeal_request.py`** — 7 tests for the `AppealRequest` Pydantic model:
+- Required field validation
+- Optional field defaults
+- Automatic `created_at` timestamp
+- `get_context()` method with date formatting
+
+**`tests/test_email_manager.py`** — 4 tests for the `EmailManager` registry:
+- Protocol registration and retrieval
+- Error handling for unregistered protocols
+- Overwrite behavior
+- Delegation to protocol implementations
+
+**`tests/test_files_utils.py`** — 12 tests for file utilities in `src/utils/files.py`:
+- MIME type detection (`get_mime`)
+- Unique filename generation (`create_file_name`)
+- File-to-buffer conversion (`file_to_buffer`)
+- Buffer-to-file saving (`save`)
+- Date-based directory creation (`create_path_dir`)
+
+**`tests/test_localization.py`** — 5 tests for `FluentManager`:
+- UI, mail, and logs localization
+- Fallback mechanism
+- Locale directory validation
+
+**`tests/test_message_factory.py`** — 10 tests for `AppealMessageFactory`:
+- Email headers (From, To, Subject, Cc, Bcc)
+- Attachment handling
+- Multiple recipient support
+
+**Test coverage:** 445 lines of test code, 38 tests total. Run with `pytest` or `uv run pytest`.
