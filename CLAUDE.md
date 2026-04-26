@@ -96,3 +96,49 @@ The project has 38 tests covering core functionality:
 - Multiple recipient support
 
 **Test coverage:** 445 lines of test code, 38 tests total. Run with `pytest` or `uv run pytest`.
+
+## Modules Not Yet Covered by Tests
+
+The following modules are currently untested and would benefit from test coverage:
+
+**`src/core/`** — Document generation and SMTP implementations:
+- `doc_manager.py` — `DocManager` for DOCX file generation
+- `txt_manager.py` — `TxtManager` for text file generation
+- `smtp_implementations.py` — `SMTPSenderTLS` and `SMTPSenderSSL` classes
+
+**`src/abstract/`** — Base classes and their implementations:
+- `application_generator.py` — `BaseTemplateManager` and `GlobalGenerator` registry
+- `application_name_creator.py` — `BaseNameCreator` and `NameCreator`
+- `application_sender.py` — `BaseSender` and `EmailSender`
+- `application_saver.py` — `BaseSaver` and `FileSaver`
+
+**`src/models/`** — Enums and custom errors:
+- `email_errors.py` — `EmailFileNotFoundError` and `EmailSendError`
+- `smtp.py` — `SMTPProtokol` enum
+- `file_type.py` — `FileType` enum
+- `logging.py` — `LoggingLevel` enum
+
+**`src/config/`** — Pydantic settings classes:
+- `app.py` — Main application settings
+- `email_sender.py` — Email sender configuration
+- `email_recipient.py` — Email recipient configuration
+- `google_analytics.py` — Google Analytics settings
+- `server.py` — Server settings
+
+**`src/utils/`** — Utility functions:
+- `emails.py` — `add_attachment_from_buffer` and `add_attachment_from_file`
+- `measurement_api.py` — `MeasurementAPI` for Google Analytics integration
+
+**`src/ui/`** — UI components and routing (lower priority, requires Flet mocking):
+- `main.py` — Route handling and app initialization
+- `routes/application.py` — Application form page
+- `routes/settings.py` — Settings page
+- `routes/about.py` — About page
+- `routes/author.py` — Author page
+- `routes/error404.py` — 404 error page
+- `routes/root.py` — Root page
+- `utils/models.py` — `PandorasBox` and `Officer` dataclasses
+- `utils/elements.py` — UI element factories (`back_button`, `app_bar`, `link`)
+- `utils/style.py` — Style settings
+
+**Priority for testing:** Core business logic (`src/core/`, `src/abstract/`, `src/utils/`) should be tested first, followed by configuration (`src/config/`). UI components (`src/ui/`) are lower priority as they require extensive mocking of Flet framework.
