@@ -1,85 +1,90 @@
 ### Agents
-.agents/
+/.agents/
 
 ### Git & Metadata
-.git/
-.gitignore
-.dockerignore
-.pre-commit-config.yaml
+**/.git/
+**/.gitignore
+**/.dockerignore
+**/.pre-commit-config.yaml
 
 ### Docs & Info (not needed in container)
-docs/
-README.md
-AUTHORS.md
-LICENSE
-NOTICE
-SECURITY.md
-CONTRIBUTING.md
-CITATION.cff
+/docs/
+/README.md
+/AUTHORS.md
+/LICENSE
+/NOTICE
+/SECURITY.md
+/CONTRIBUTING.md
+/CITATION.cff
 
 ### IDEs
-.idea/
-.vscode/
-*.swo
+**/.idea/
+**/.vscode/
 
-### Virtual environments & uv
-.venv*/
-.cache/uv/
-__pypackages__/
+### Virtual environments
+**/.venv*/
 
 ### Environmental variables
-src/assets/.env
-*.env
-*.env.*
+**/.env
+**/.env.*
 
-### Python-generated files
-**/__pycache__/
-**/*.pyc
-*.py[oc]
-dist/
-wheels/
-*.egg-info
-build*/
-.flet/
-
-### Tests & CI
-htmlcov/
-.pytest_cache/
-.coverage
-.tox/
-.nox/
-tests/
-
-### Project paths
-src/assets/output/*
-!src/assets/output/.gitkeep
-#
-src/assets/templates/*
-!src/assets/templates/.gitkeep
-#
-src/assets/locales/*
-!src/assets/locales/.gitkee
-#
-bin/
-src/temp/
-
-### Docker
-docker_data/*
-#
-!docker_data/output/
-docker_data/output/*
-!docker_data/output/.gitkeep
-#
-!docker_data/templates/
-docker_data/templates/*
-!docker_data/templates/.gitkeep
-#
-Dockerfile
-docker-compose.yml
-
-#
+# OS
 **/*.tmp
 **/*.swp
+**/*.swo
+**/.cache
+**/.DS_Store
+**/Thumbs.db
+**/.thumbnails
+
+### Logs
+**/*.log
+**/logs/
+
+### Python-generated files
+**/__pypackages__/
+**/__pycache__/
+**/*.pyc
+**/*.py[oc]
+**/dist/
+**/wheels/
+**/*.egg-info
+**/build*/
+**/.flet/
+
+### Tests
+**/htmlcov/
+**/.pytest_cache/
+**/.coverage
+**/.tox/
+**/.nox/
+
+### Project paths
+/src/assets/output/*
+!/src/assets/output/.gitkeep
+#
+/src/assets/templates/*
+!/src/assets/templates/.gitkeep
+#
+/src/assets/locales/*
+!/src/assets/locales/.gitkeep
+#
+/bin/
+/src/temp/
+
+### Docker
+/docker_data/*
+#
+!/docker_data/output/
+/docker_data/output/*
+!/docker_data/output/.gitkeep
+#
+!/docker_data/templates/
+/docker_data/templates/*
+!/docker_data/templates/.gitkeep
+#
+/Dockerfile
+/docker-compose.yml
 
 # Clouds
 **/.stfolder/

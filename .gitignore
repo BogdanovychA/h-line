@@ -1,68 +1,69 @@
 ### Agents
-.agents/
+/.agents/
 
 ### IDEs
-.idea/
-.vscode/
-*.swo
+**/.idea/
+**/.vscode/
 
-### Virtual environments & uv
-.venv*/
-.cache/uv/
-__pypackages__/
+### Virtual environments
+**/.venv*/
 
 ### Environmental variables
-src/assets/.env
-*.env
-*.env.*
-!.env.example
-!src/assets/.env.example
+**/.env
+**/.env.*
+!**/.env.example
 
-### Python-generated files
-**/__pycache__/
-**/*.pyc
-*.py[oc]
-dist/
-wheels/
-*.egg-info
-build*/
-.flet/
-
-### Logs
-*.log
-logs/
-
-### Tests
-htmlcov/
-.pytest_cache/
-.coverage
-.tox/
-.nox/
-
-### Project
-src/assets/output/*
-!src/assets/output/.gitkeep
-bin/
-src/temp/
-
-### Docker
-docker_data/*
-#
-!docker_data/output/
-docker_data/output/*
-!docker_data/output/.gitkeep
-#
-!docker_data/templates/
-docker_data/templates/*
-!docker_data/templates/.gitkeep
-#
-!docker_data/locales/
-docker_data/locales/*
-!docker_data/locales/.gitkeep
-
-#
+# OS
 **/*.tmp
 **/*.swp
+**/*.swo
+**/.cache
+**/.DS_Store
+**/Thumbs.db
+**/.thumbnails
+
+### Logs
+**/*.log
+**/logs/
+
+### Python-generated files
+**/__pypackages__/
+**/__pycache__/
+**/*.pyc
+**/*.py[oc]
+**/dist/
+**/wheels/
+**/*.egg-info
+**/build*/
+**/.flet/
+
+### Tests
+**/htmlcov/
+**/.pytest_cache/
+**/.coverage
+**/.tox/
+**/.nox/
+
+### Project
+/src/assets/output/*
+!/src/assets/output/.gitkeep
+/bin/
+/src/temp/
+
+### Docker
+/docker_data/*
+#
+!/docker_data/output/
+/docker_data/output/*
+!/docker_data/output/.gitkeep
+#
+!/docker_data/templates/
+/docker_data/templates/*
+!/docker_data/templates/.gitkeep
+#
+!/docker_data/locales/
+/docker_data/locales/*
+!/docker_data/locales/.gitkeep
 
 # Clouds
 **/.stfolder/
