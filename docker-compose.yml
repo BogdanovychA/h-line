@@ -16,4 +16,4 @@ services:
       - ./docker_data/templates:/app/src/assets/templates
       - ./docker_data/locales:/app/src/assets/locales
     ports:
-      - "8081:8080"
+      - "8081:8000"
