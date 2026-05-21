@@ -127,7 +127,7 @@ The following modules are currently untested and would benefit from test coverag
 
 **`src/utils/`** — Utility functions:
 - `emails.py` — `add_attachment_from_buffer` and `add_attachment_from_file`
-- `measurement_api.py` — `MeasurementAPI` for Google Analytics integration
+- `files.py` — File writing and processing utilities
 
 **`src/ui/`** — UI components and routing (lower priority, requires Flet mocking):
 - `main.py` — Route handling and app initialization
