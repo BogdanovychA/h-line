@@ -248,6 +248,7 @@ async def main(page: ft.Page):
         ga=MeasurementAPI(
             m10t_id=google_analytics.settings.id,
             secret_key=google_analytics.settings.secret_key,
+            debug=logging.getLogger().getEffectiveLevel() <= logging.DEBUG,
         ),
         name_creator=application_name_creator.NameCreator(),
         fluent=fluent_mgr,
