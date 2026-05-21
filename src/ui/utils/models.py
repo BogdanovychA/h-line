@@ -13,7 +13,7 @@ from abstract.application_generator import BaseGenerator
 from abstract.application_name_creator import BaseNameCreator
 from abstract.application_saver import BaseSaver
 from abstract.application_sender import BaseSender
-from utils.measurement_api import MeasurementAPI
+from measurement_api import MeasurementAPI
 
 
 @dataclass
