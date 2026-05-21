@@ -42,8 +42,7 @@ dev = [
     "flet-web==0.85.1",
     "flet-desktop==0.85.1",
     "pre_commit",
-    "black",
-    "isort",
+    "ruff",
     "pytest",
 ]
 
@@ -72,10 +71,9 @@ build-backend = "setuptools.build_meta"
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ['py312']
-skip-string-normalization = true
+target-version = "py312"
 
-[tool.isort]
-profile = "black"
+[tool.ruff.format]
+quote-style = "preserve"

@@ -126,7 +126,6 @@ async def build_view(
 
         _controls_disable()
         try:
-
             buffer = await asyncio.to_thread(box.generator.generate_application, appeal)
 
             if buffer is None:

@@ -43,7 +43,6 @@ class MeasurementAPI:
 
         try:
             async with httpx.AsyncClient() as client:
-
                 response = await client.post(
                     base_url, params=query_params, json=payload, timeout=5.0
                 )

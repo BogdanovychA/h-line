@@ -4,7 +4,6 @@
 # Licensed under the EUPL-1.2 or later
 # See the LICENSE file in the project root for more information.
 
-import os
 from pathlib import Path
 
 import pytest
