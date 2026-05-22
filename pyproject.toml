@@ -1,6 +1,6 @@
 [project]
 name = "h-line"
-version = "1.1.3"
+version = "1.1.4"
 description = "Open-source hotline automation tool for processing citizen appeals in the Ukrainian public sector."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -33,7 +33,7 @@ dependencies = [
     "httpx==0.28.1",
     "jinja2==3.1.6",
     "fluent-manager==1.0.2",
-    "measurement-api==0.1.0",
+    "measurement-api==0.2.0",
 ]
 
 [dependency-groups]

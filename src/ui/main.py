@@ -246,7 +246,7 @@ async def main(page: ft.Page):
         storage=FletStorage(app.settings.name),
         generator=application_generator.GlobalGenerator(fluent=fluent_mgr),
         ga=MeasurementAPI(
-            m10t_id=google_analytics.settings.id,
+            id=google_analytics.settings.id,
             secret_key=google_analytics.settings.secret_key,
             debug=logging.getLogger().getEffectiveLevel() <= logging.DEBUG,
         ),
