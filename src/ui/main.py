@@ -11,6 +11,7 @@ import uuid
 import flet as ft
 from flet_storage import FletStorage
 from fluent_manager import FluentManager
+from measurement_api import MeasurementAPI
 from pydantic import ValidationError
 
 from abstract import (
@@ -29,7 +30,6 @@ from models.smtp import SMTPProtokol
 from ui.routes import about, application, author, error404, root, settings
 from ui.utils import elements, style
 from ui.utils.models import Officer, PandorasBox
-from measurement_api import MeasurementAPI
 
 logging.basicConfig(
     level=server.settings.logging_level,

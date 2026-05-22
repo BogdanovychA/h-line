@@ -12,8 +12,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pathlib import Path
-    from models.file_type import FileType
+
     from fluent_manager import FluentManager
+
+    from models.file_type import FileType
 
 import uuid
 from datetime import datetime

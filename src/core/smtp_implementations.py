@@ -10,8 +10,9 @@ import logging
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.email_manager import EmailMessage
     from fluent_manager import FluentManager
+
+    from core.email_manager import EmailMessage
 
 import smtplib
 from abc import ABC, abstractmethod

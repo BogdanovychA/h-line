@@ -9,17 +9,20 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models.appeal_request import AppealRequest
     from io import BytesIO
+
     from fluent_manager import FluentManager
+
+    from models.appeal_request import AppealRequest
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, ClassVar, Type
 
 if TYPE_CHECKING:
-    from models.appeal_request import AppealRequest
     from io import BytesIO
     from pathlib import Path
+
+    from models.appeal_request import AppealRequest
 
 from config import app
 from models.file_type import FileType

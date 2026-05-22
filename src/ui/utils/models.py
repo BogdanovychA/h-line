@@ -8,12 +8,12 @@ from dataclasses import dataclass, field
 
 from flet_storage import FletStorage
 from fluent_manager import FluentManager
+from measurement_api import MeasurementAPI
 
 from abstract.application_generator import BaseGenerator
 from abstract.application_name_creator import BaseNameCreator
 from abstract.application_saver import BaseSaver
 from abstract.application_sender import BaseSender
-from measurement_api import MeasurementAPI
 
 
 @dataclass

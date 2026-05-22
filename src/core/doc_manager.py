@@ -11,9 +11,11 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models.appeal_request import AppealRequest
     from pathlib import Path
+
     from fluent_manager import FluentManager
+
+    from models.appeal_request import AppealRequest
 
 from docxtpl import DocxTemplate
 

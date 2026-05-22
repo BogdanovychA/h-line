@@ -14,6 +14,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 if TYPE_CHECKING:
     from pathlib import Path
+
     from fluent_manager import FluentManager
 
     from models.appeal_request import AppealRequest
