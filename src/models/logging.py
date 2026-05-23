@@ -15,3 +15,12 @@ class LoggingLevel(StrEnum):
     WARNING = "WARNING"
     ERROR = "ERROR"
     CRITICAL = "CRITICAL"
+
+
+class EventName(StrEnum):
+    ROUTE_CHANGE = "route_change"
+    APPLICATION_CREATE = "application_create"
+
+
+class Analytics(StrEnum):
+    NO_PLATFORM = "no_platform"

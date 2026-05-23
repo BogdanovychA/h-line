@@ -1,6 +1,6 @@
 [project]
 name = "h-line"
-version = "1.1.4"
+version = "1.1.5"
 description = "Open-source hotline automation tool for processing citizen appeals in the Ukrainian public sector."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -29,7 +29,7 @@ dependencies = [
     "pydantic[email]==2.13.4",
     "docxtpl==0.20.2",
     "pydantic-extra-types==2.11.2",
-    "phonenumbers==9.0.30",
+    "phonenumbers==9.0.31",
     "httpx==0.28.1",
     "jinja2==3.1.6",
     "fluent-manager==1.0.2",

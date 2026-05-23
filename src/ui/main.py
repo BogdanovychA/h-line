@@ -26,6 +26,7 @@ from core.doc_manager import DocManager
 from core.txt_manager import TxtManager
 from models.appeal_request import email_adapter
 from models.file_type import FileType
+from models.logging import Analytics, EventName
 from models.smtp import SMTPProtokol
 from ui.routes import about, application, author, error404, root, settings
 from ui.utils import elements, style
@@ -192,9 +193,9 @@ async def main(page: ft.Page):
 
         await box.ga.log_event(
             box.client_id,
-            "route_change",
+            EventName.ROUTE_CHANGE,
             page_path=page.route,
-            platform=str(page.platform.value),
+            platform=box.client_platform,
         )
 
         page.views.clear()
@@ -252,6 +253,9 @@ async def main(page: ft.Page):
         ),
         name_creator=application_name_creator.NameCreator(),
         fluent=fluent_mgr,
+        client_id="",
+        client_platform=page.platform.value if page.platform else Analytics.NO_PLATFORM,
+        sender=None,
         saver=(
             application_saver.FileSaver(fluent=fluent_mgr)
             if app.settings.save_to_disk

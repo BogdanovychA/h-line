@@ -34,7 +34,8 @@ class PandorasBox:
     ga: MeasurementAPI
     name_creator: BaseNameCreator
     fluent: FluentManager
-    sender: BaseSender | None = None
-    saver: BaseSaver | None = None
-    client_id: str = ""
+    client_id: str
+    client_platform: str
+    sender: BaseSender | None
+    saver: BaseSaver | None
     officer: Officer = field(default_factory=Officer)

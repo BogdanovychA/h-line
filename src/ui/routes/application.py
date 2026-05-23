@@ -19,6 +19,7 @@ from pydantic import ValidationError
 from config import app
 from models.appeal_request import AppealRequest, email_adapter, phone_adapter
 from models.email_errors import EmailFileNotFoundError, EmailSendError
+from models.logging import EventName
 from ui.utils import elements, style
 
 ROUTE = app.settings.base_url + "/application"
@@ -157,9 +158,9 @@ async def build_view(
 
             await box.ga.log_event(
                 box.client_id,
-                "application_create",
+                EventName.APPLICATION_CREATE,
                 officer_email=officer_email,
-                platform=str(page.platform.value),
+                platform=box.client_platform,
             )
 
             await _clear()
