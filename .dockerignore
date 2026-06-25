@@ -1,5 +1,6 @@
 ### Agents
 /.agents/
+/.opencode/
 
 ### Git & Metadata
 **/.git/
@@ -19,6 +20,7 @@
 /CLAUDE.md
 /GEMINI.md
 /AGENTS.md
+/TODO.md
 
 ### IDEs
 **/.idea/

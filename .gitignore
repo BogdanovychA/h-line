@@ -21,6 +21,8 @@
 
 ### Agents
 /.agents/
+/.opencode/
+TODO.md
 
 # OS
 *.tmp
