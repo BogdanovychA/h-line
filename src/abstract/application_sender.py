@@ -47,8 +47,8 @@ class EmailSender(BaseSender):
             fluent=fluent,
             sender_email=email_sender.settings.email,
             recipient_list=[email_recipient.settings.to],
-            cc_recipients=[email_recipient.settings.cc, *cc],
-            bcc_recipients=[email_recipient.settings.bcc, *bcc],
+            cc_recipients=[c for c in [email_recipient.settings.cc, *cc] if c],
+            bcc_recipients=[c for c in [email_recipient.settings.bcc, *bcc] if c],
         )
 
         protokol_class = EmailManager.get_protokol_class(
