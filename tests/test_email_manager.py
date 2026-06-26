@@ -17,6 +17,16 @@ from models.smtp import SMTPProtocol
 LOCALES_PATH = Path("src/assets/locales")
 
 
+class DummySender(SMTPSenderBase):
+    def _get_connection(self):
+        pass
+
+
+class AnotherDummySender(SMTPSenderBase):
+    def _get_connection(self):
+        pass
+
+
 @pytest.fixture
 def fluent():
     return FluentManager(
@@ -36,10 +46,9 @@ def isolate_registry():
 
 
 def test_register_and_retrieve_protocol(fluent):
-    mock_class = MagicMock(spec=SMTPSenderBase)
-    EmailManager.register(SMTPProtocol.TLS, mock_class)
+    EmailManager.register(SMTPProtocol.TLS, DummySender)
     result = EmailManager.get_protocol_class(SMTPProtocol.TLS, fluent)
-    assert result is mock_class
+    assert result is DummySender
 
 
 def test_get_unregistered_protocol_raises_value_error(fluent):
@@ -48,11 +57,22 @@ def test_get_unregistered_protocol_raises_value_error(fluent):
 
 
 def test_register_overwrites_existing(fluent):
-    first = MagicMock(spec=SMTPSenderBase)
-    second = MagicMock(spec=SMTPSenderBase)
-    EmailManager.register(SMTPProtocol.SSL, first)
-    EmailManager.register(SMTPProtocol.SSL, second)
-    assert EmailManager.get_protocol_class(SMTPProtocol.SSL, fluent) is second
+    EmailManager.register(SMTPProtocol.SSL, DummySender)
+    EmailManager.register(SMTPProtocol.SSL, AnotherDummySender)
+    assert (
+        EmailManager.get_protocol_class(SMTPProtocol.SSL, fluent) is AnotherDummySender
+    )
+
+
+def test_register_invalid_class_raises_type_error():
+    class NotASender:
+        pass
+
+    with pytest.raises(TypeError):
+        EmailManager.register(SMTPProtocol.TLS, NotASender)
+
+    with pytest.raises(TypeError):
+        EmailManager.register(SMTPProtocol.TLS, "not a class at all")
 
 
 def test_send_delegates_to_protocol():

@@ -29,6 +29,12 @@ class EmailManager:
         cls, protocol_type: SMTPProtocol, protocol_class: Type[SMTPSenderBase]
     ) -> None:
         """Реєстрація конкретного класу реалізації SMTP-шифрування"""
+        if not isinstance(protocol_class, type) or not issubclass(
+            protocol_class, SMTPSenderBase
+        ):
+            raise TypeError(
+                f"Expected subclass of SMTPSenderBase, got {protocol_class}"
+            )
         cls._REGISTRY[protocol_type] = protocol_class
 
     @classmethod
