@@ -1,6 +1,8 @@
 ### Agents
 /.agents/
 /.opencode/
+/.antigravitycli/
+/.claude/
 
 ### Git & Metadata
 **/.git/
