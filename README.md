@@ -86,7 +86,7 @@ cp src/assets/.env.example src/assets/.env
    ```python
    EmailManager.register(SMTPProtocol.CUSTOM, MyCustomSender)
    ```
-   3. **Додавання нової мови:** Створіть новий каталог в `src/assets/locales/` (наприклад, `en/`) та додайте файли `ui.ftl`, `mail.ftl` та `logs.ftl`. Додана мова підтягнеться автоматично.
+3. **Додавання нової мови:** Створіть новий каталог в `src/assets/locales/` (наприклад, `en/`) та додайте файли `ui.ftl`, `mail.ftl` та `logs.ftl`. Додана мова підтягнеться автоматично.
 
 ---
 
