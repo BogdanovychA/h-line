@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -72,16 +72,16 @@ The project has 38 tests covering core functionality:
 - Automatic `created_at` timestamp
 - `get_context()` method with date formatting
 
-**`tests/test_email_manager.py`** — 4 tests for the `EmailManager` registry:
+**`tests/test_email_manager.py`** — 5 tests for the `EmailManager` registry:
 - Protocol registration and retrieval
 - Error handling for unregistered protocols
 - Overwrite behavior
+- Verification that only SMTPSenderBase subclasses are registered
 - Delegation to protocol implementations
 
-**`tests/test_files_utils.py`** — 12 tests for file utilities in `src/utils/files.py`:
+**`tests/test_files_utils.py`** — 11 tests for file utilities in `src/utils/files.py`:
 - MIME type detection (`get_mime`)
 - Unique filename generation (`create_file_name`)
-- File-to-buffer conversion (`file_to_buffer`)
 - Buffer-to-file saving (`save`)
 - Date-based directory creation (`create_path_dir`)
 
@@ -95,7 +95,7 @@ The project has 38 tests covering core functionality:
 - Attachment handling
 - Multiple recipient support
 
-**Test coverage:** 445 lines of test code, 38 tests total. Run with `pytest` or `uv run pytest`.
+**Test coverage:** 445 lines of test code, 37 tests total. Run with `pytest` or `uv run pytest`.
 
 ## Modules Not Yet Covered by Tests
 
@@ -113,7 +113,7 @@ The following modules are currently untested and would benefit from test coverag
 - `application_saver.py` — `BaseSaver` and `FileSaver`
 
 **`src/models/`** — Enums and custom errors:
-- `email_errors.py` — `EmailFileNotFoundError` and `EmailSendError`
+- `email_errors.py` — `EmailSendError`
 - `smtp.py` — `SMTPProtocol` enum
 - `file_type.py` — `FileType` enum
 - `logging.py` — `LoggingLevel` enum
@@ -126,7 +126,7 @@ The following modules are currently untested and would benefit from test coverag
 - `server.py` — Server settings
 
 **`src/utils/`** — Utility functions:
-- `emails.py` — `add_attachment_from_buffer` and `add_attachment_from_file`
+- `emails.py` — `add_attachment_from_buffer`
 - `files.py` — File writing and processing utilities
 
 **`src/ui/`** — UI components and routing (lower priority, requires Flet mocking):
