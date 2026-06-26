@@ -38,7 +38,7 @@ The app follows an `abstract → core/models → ui` layered flow.
 
 **`src/core/`** — concrete implementations. `DocManager`/`TxtManager` implement `BaseTemplateManager`. `SMTPSenderTLS`/`SMTPSenderSSL` implement `SMTPSenderBase`. `EmailManager` is the registry for SMTP protocols.
 
-**`src/models/`** — `AppealRequest` (Pydantic, core data model for a citizen appeal), `FileType` / `SMTPProtokol` enums, custom errors.
+**`src/models/`** — `AppealRequest` (Pydantic, core data model for a citizen appeal), `FileType` / `SMTPProtocol` enums, custom errors.
 
 **`src/config/`** — pydantic-settings classes with env-var prefixes: `APP__*`, `SERVER__*`, `EMAIL_SENDER__*`, `EMAIL_RECIPIENT__*`, `GOOGLE_ANALYTICS__*`. Source: `src/assets/.env`.
 
@@ -56,7 +56,7 @@ The app follows an `abstract → core/models → ui` layered flow.
 ```python
 GlobalGenerator.register(FileType.PDF, MyPdfManager)
 ```
-Same pattern for SMTP protocols via `EmailManager.register(SMTPProtokol.X, MyClass)`.
+Same pattern for SMTP protocols via `EmailManager.register(SMTPProtocol.X, MyClass)`.
 
 **Docker versioning** — `APP_VERSION` in the root `.env` tags the image. `pull_policy: missing` means the image is never auto-pulled or rebuilt if it already exists locally; use `--build` explicitly when you want a new build.
 
@@ -114,7 +114,7 @@ The following modules are currently untested and would benefit from test coverag
 
 **`src/models/`** — Enums and custom errors:
 - `email_errors.py` — `EmailFileNotFoundError` and `EmailSendError`
-- `smtp.py` — `SMTPProtokol` enum
+- `smtp.py` — `SMTPProtocol` enum
 - `file_type.py` — `FileType` enum
 - `logging.py` — `LoggingLevel` enum
 

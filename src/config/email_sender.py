@@ -7,7 +7,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from config import app
-from models.smtp import SMTPProtokol
+from models.smtp import SMTPProtocol
 
 
 class Settings(BaseSettings):
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     port: int | None = None
     email: str | None = None
     password: str | None = None
-    protokol: SMTPProtokol | None = None
+    protocol: SMTPProtocol | None = None
 
     model_config = SettingsConfigDict(
         env_file=app.settings.assets_dir / ".env",

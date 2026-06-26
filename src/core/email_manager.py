@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from fluent_manager import FluentManager
 
 from core.smtp_implementations import SMTPSenderBase
-from models.smtp import SMTPProtokol
+from models.smtp import SMTPProtocol
 
 logger = logging.getLogger(__name__)
 
@@ -22,31 +22,31 @@ logger = logging.getLogger(__name__)
 class EmailManager:
     """Універсальний менеджер для відправки готових об'єктів EmailMessage."""
 
-    _REGISTRY: ClassVar[dict[SMTPProtokol, Type[SMTPSenderBase]]] = {}
+    _REGISTRY: ClassVar[dict[SMTPProtocol, Type[SMTPSenderBase]]] = {}
 
     @classmethod
     def register(
-        cls, protokol_type: SMTPProtokol, protokol_class: Type[SMTPSenderBase]
+        cls, protocol_type: SMTPProtocol, protocol_class: Type[SMTPSenderBase]
     ) -> None:
         """Реєстрація конкретного класу реалізації SMTP-шифрування"""
-        cls._REGISTRY[protokol_type] = protokol_class
+        cls._REGISTRY[protocol_type] = protocol_class
 
     @classmethod
-    def get_protokol_class(
-        cls, protokol_type: SMTPProtokol, fluent: FluentManager
+    def get_protocol_class(
+        cls, protocol_type: SMTPProtocol, fluent: FluentManager
     ) -> Type[SMTPSenderBase]:
         """Повертає зареєстрований клас протоколу або викидає помилку."""
-        if protokol_type not in cls._REGISTRY:
+        if protocol_type not in cls._REGISTRY:
             msg = fluent.get(
-                "log-error-protocol-not-registered", protocol=str(protokol_type)
+                "log-error-protocol-not-registered", protocol=str(protocol_type)
             )
             raise ValueError(msg)
-        return cls._REGISTRY[protokol_type]
+        return cls._REGISTRY[protocol_type]
 
-    def __init__(self, sender_protokol: SMTPSenderBase) -> None:
+    def __init__(self, sender_protocol: SMTPSenderBase) -> None:
         """Ініціалізація менеджера електронної пошти конкретним протоколом відправки."""
-        self.protokol = sender_protokol
+        self.protocol = sender_protocol
 
     def send(self, message: EmailMessage) -> None:
         """Відправляє готовий об'єкт EmailMessage."""
-        self.protokol.send(message)
+        self.protocol.send(message)

@@ -84,7 +84,7 @@ cp src/assets/.env.example src/assets/.env
    ```
 2. **Новий поштовий протокол:** Створіть реалізацію `SMTPSenderBase` та зареєструйте її:
    ```python
-   EmailManager.register(SMTPProtokol.CUSTOM, MyCustomSender)
+   EmailManager.register(SMTPProtocol.CUSTOM, MyCustomSender)
    ```
    3. **Додавання нової мови:** Створіть новий каталог в `src/assets/locales/` (наприклад, `en/`) та додайте файли `ui.ftl`, `mail.ftl` та `logs.ftl`. Додана мова підтягнеться автоматично.
 

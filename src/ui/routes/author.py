@@ -41,7 +41,7 @@ def build_view(page: ft.Page, box: PandorasBox) -> ft.View:
             ft.Text(box.fluent.get("author-name"), size=style.settings.text_size),
             ft.Text(""),
             ft.Image(
-                src="/images/bogdanovych-900x900.jpg",  # Посилання на картинку
+                src="/images/bogdanovych-900x900.jpg",
                 width=200,
                 height=200,
             ),

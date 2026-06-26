@@ -27,7 +27,7 @@ from core.txt_manager import TxtManager
 from models.appeal_request import email_adapter
 from models.file_type import FileType
 from models.logging import Analytics, EventName
-from models.smtp import SMTPProtokol
+from models.smtp import SMTPProtocol
 from ui.routes import about, application, author, error404, root, settings
 from ui.utils import elements, style
 from ui.utils.models import Officer, PandorasBox
@@ -155,7 +155,6 @@ async def build_main_view(
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
             elements.app_bar(box.fluent.get("app-title"), page),
-            # ft.Text(""),
             ft.Image(
                 src="/images/logo-sies-317x312.png",
                 width=200,
@@ -231,10 +230,10 @@ async def main(page: ft.Page):
     application_generator.GlobalGenerator.register(FileType.HTML, TxtManager)
 
     email_manager.EmailManager.register(
-        SMTPProtokol.TLS, smtp_implementations.SMTPSenderTLS
+        SMTPProtocol.TLS, smtp_implementations.SMTPSenderTLS
     )
     email_manager.EmailManager.register(
-        SMTPProtokol.SSL, smtp_implementations.SMTPSenderSSL
+        SMTPProtocol.SSL, smtp_implementations.SMTPSenderSSL
     )
 
     fluent_mgr = FluentManager(

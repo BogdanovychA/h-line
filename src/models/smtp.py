@@ -7,7 +7,7 @@
 from enum import StrEnum
 
 
-class SMTPProtokol(StrEnum):
+class SMTPProtocol(StrEnum):
     """Типи протоколів шифрування SMTP-з'єднання."""
 
     SSL = "SSL"
