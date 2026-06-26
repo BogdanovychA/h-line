@@ -146,7 +146,7 @@ async def build_view(
 
             if box.saver is not None:
                 try:
-                    box.saver.save(buffer, file_name)
+                    await asyncio.to_thread(box.saver.save, buffer, file_name)
                 except PermissionError:
                     message_block.value = box.fluent.get("error-save-file")
                     message_block.update()
