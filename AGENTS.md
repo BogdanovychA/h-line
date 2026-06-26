@@ -64,13 +64,26 @@ Same pattern for SMTP protocols via `EmailManager.register(SMTPProtocol.X, MyCla
 
 ## Testing
 
-The project has 38 tests covering core functionality:
+The project has 65 tests covering core functionality:
+
+**`tests/test_abstract_layer.py`** — 6 tests for abstract layer registries and managers:
+- GlobalGenerator registration and class retrieval
+- NameCreator file name generation delegator
+- FileSaver output directory handling and saving
+- EmailSender protocol instantiation and email transmission delegation
 
 **`tests/test_appeal_request.py`** — 7 tests for the `AppealRequest` Pydantic model:
 - Required field validation
 - Optional field defaults
 - Automatic `created_at` timestamp
 - `get_context()` method with date formatting
+
+**`tests/test_config.py`** — 5 tests for application configuration settings:
+- Environment variable overrides for AppSettings, SenderSettings, RecipientSettings, GoogleAnalytics, and ServerSettings
+
+**`tests/test_doc_txt_managers.py`** — 4 tests for document template managers:
+- DocManager DOCX rendering success and failure modes
+- TxtManager Jinja2 text rendering success and strict undefined failure modes
 
 **`tests/test_email_manager.py`** — 5 tests for the `EmailManager` registry:
 - Protocol registration and retrieval
@@ -79,11 +92,14 @@ The project has 38 tests covering core functionality:
 - Verification that only SMTPSenderBase subclasses are registered
 - Delegation to protocol implementations
 
-**`tests/test_files_utils.py`** — 11 tests for file utilities in `src/utils/files.py`:
+**`tests/test_emails_utils.py`** — 1 test for email buffer utilities:
+- `add_attachment_from_buffer` mime type determination and attachments handling
+
+**`tests/test_files_utils.py`** — 14 tests for file utilities in `src/utils/files.py`:
 - MIME type detection (`get_mime`)
 - Unique filename generation (`create_file_name`)
-- Buffer-to-file saving (`save`)
-- Date-based directory creation (`create_path_dir`)
+- Buffer-to-file saving (`save`) and error paths
+- Date-based directory creation (`create_path_dir`) and PermissionError handling
 
 **`tests/test_localization.py`** — 5 tests for `FluentManager`:
 - UI, mail, and logs localization
@@ -95,39 +111,20 @@ The project has 38 tests covering core functionality:
 - Attachment handling
 - Multiple recipient support
 
-**Test coverage:** 445 lines of test code, 37 tests total. Run with `pytest` or `uv run pytest`.
+**`tests/test_models.py`** — 6 tests for system enums and exceptions:
+- Values validation for SMTPProtocol, FileType, LoggingLevel, EventName, Analytics
+- Custom email error classification (`EmailSendError` / `EmailError`)
+
+**`tests/test_smtp_implementations.py`** — 3 tests for SMTP transport implementations:
+- SMTPSenderSSL success path and SSL socket wrapping
+- SMTPSenderTLS success path and STARTTLS negotiation flow
+- Exception handling and translation to `EmailSendError` on connection/authentication failures
+
+**Test coverage:** Core business logic (`src/core/`, `src/abstract/`, `src/utils/`, `src/config/`, `src/models/`) is fully tested with high coverage. Run with `pytest` or `uv run pytest`.
 
 ## Modules Not Yet Covered by Tests
 
 The following modules are currently untested and would benefit from test coverage:
-
-**`src/core/`** — Document generation and SMTP implementations:
-- `doc_manager.py` — `DocManager` for DOCX file generation
-- `txt_manager.py` — `TxtManager` for text file generation
-- `smtp_implementations.py` — `SMTPSenderTLS` and `SMTPSenderSSL` classes
-
-**`src/abstract/`** — Base classes and their implementations:
-- `application_generator.py` — `BaseTemplateManager` and `GlobalGenerator` registry
-- `application_name_creator.py` — `BaseNameCreator` and `NameCreator`
-- `application_sender.py` — `BaseSender` and `EmailSender`
-- `application_saver.py` — `BaseSaver` and `FileSaver`
-
-**`src/models/`** — Enums and custom errors:
-- `email_errors.py` — `EmailSendError`
-- `smtp.py` — `SMTPProtocol` enum
-- `file_type.py` — `FileType` enum
-- `logging.py` — `LoggingLevel` enum
-
-**`src/config/`** — Pydantic settings classes:
-- `app.py` — Main application settings
-- `email_sender.py` — Email sender configuration
-- `email_recipient.py` — Email recipient configuration
-- `google_analytics.py` — Google Analytics settings
-- `server.py` — Server settings
-
-**`src/utils/`** — Utility functions:
-- `emails.py` — `add_attachment_from_buffer`
-- `files.py` — File writing and processing utilities
 
 **`src/ui/`** — UI components and routing (lower priority, requires Flet mocking):
 - `main.py` — Route handling and app initialization
@@ -141,4 +138,6 @@ The following modules are currently untested and would benefit from test coverag
 - `utils/elements.py` — UI element factories (`back_button`, `app_bar`, `link`)
 - `utils/style.py` — Style settings
 
-**Priority for testing:** Core business logic (`src/core/`, `src/abstract/`, `src/utils/`) should be tested first, followed by configuration (`src/config/`). UI components (`src/ui/`) are lower priority as they require extensive mocking of Flet framework.
+**`src/main.py`** — Entrypoint runner script.
+
+**Priority for testing:** UI components (`src/ui/`) and runner entrypoints are lower priority as they require extensive mocking of the Flet framework and GUI lifecycle.

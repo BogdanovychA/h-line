@@ -6,6 +6,7 @@
 
 from datetime import datetime
 from io import BytesIO
+from unittest.mock import patch
 
 import pytest
 
@@ -90,6 +91,24 @@ def test_save_buffer_position_reset_after_write(fluent, tmp_path):
     assert buf.read() == b"data"
 
 
+def test_save_permission_error(fluent):
+    from pathlib import Path
+
+    buf = BytesIO(b"data")
+    with patch.object(Path, "write_bytes", side_effect=PermissionError):
+        with pytest.raises(PermissionError):
+            save(buf, Path("/dummy_path/file.txt"), fluent)
+
+
+def test_save_generic_exception(fluent):
+    from pathlib import Path
+
+    buf = BytesIO(b"data")
+    with patch.object(Path, "write_bytes", side_effect=Exception("Disk full")):
+        result = save(buf, Path("/dummy_path/file.txt"), fluent)
+        assert result is None
+
+
 # --- create_path_dir ---
 
 
@@ -105,3 +124,11 @@ def test_create_path_dir_idempotent(fluent, tmp_path):
     result1 = create_path_dir(tmp_path, fluent)
     result2 = create_path_dir(tmp_path, fluent)
     assert result1 == result2
+
+
+def test_create_path_dir_permission_error(fluent):
+    from pathlib import Path
+
+    with patch.object(Path, "mkdir", side_effect=PermissionError):
+        with pytest.raises(PermissionError):
+            create_path_dir(Path("/dummy_path"), fluent)
