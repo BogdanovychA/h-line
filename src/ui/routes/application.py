@@ -18,7 +18,7 @@ from pydantic import ValidationError
 
 from config import app
 from models.appeal_request import AppealRequest, email_adapter, phone_adapter
-from models.email_errors import EmailFileNotFoundError, EmailSendError
+from models.email_errors import EmailSendError
 from models.logging import EventName
 from ui.utils import elements, style
 
@@ -139,10 +139,6 @@ async def build_view(
             if box.sender is not None:
                 try:
                     await asyncio.to_thread(box.sender.send, buffer, file_name)
-                except EmailFileNotFoundError:
-                    message_block.value = box.fluent.get("error-create-email")
-                    message_block.update()
-                    return
                 except EmailSendError:
                     message_block.value = box.fluent.get("error-send-email")
                     message_block.update()

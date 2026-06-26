@@ -21,8 +21,6 @@ import uuid
 from datetime import datetime
 from mimetypes import guess_type
 
-from models.email_errors import EmailFileNotFoundError
-
 logger = logging.getLogger(__name__)
 
 
@@ -62,28 +60,6 @@ def create_path_dir(output_dir: Path, fluent: FluentManager) -> Path:
         msg = fluent.get("log-error-access-create-dir")
         logger.exception(msg)
         raise PermissionError
-
-
-def create_path(output_dir: Path, file_type: FileType, fluent: FluentManager) -> Path:
-    """Створює повний шлях до нового файлу звернення."""
-
-    dir_name = create_path_dir(output_dir, fluent=fluent)
-    file_name = create_file_name(file_type)
-
-    return dir_name / file_name
-
-
-def file_to_buffer(file_path: Path, fluent: FluentManager) -> BytesIO:
-    """Зчитує файл у буфер BytesIO."""
-
-    if not file_path.is_file():
-        msg = fluent.get("log-error-file-not-found", path=str(file_path))
-        raise EmailFileNotFoundError(msg)
-
-    buffer = BytesIO(file_path.read_bytes())
-    buffer.seek(0)
-
-    return buffer
 
 
 def save(buffer: BytesIO | None, path: Path, fluent: FluentManager) -> Path | None:

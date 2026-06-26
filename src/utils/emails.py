@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from email.message import EmailMessage
     from io import BytesIO
-    from pathlib import Path
 
 from utils import files
 
@@ -33,15 +32,3 @@ def add_attachment_from_buffer(
     )
 
     buffer.seek(0)
-
-
-def add_attachment_from_file(msg: EmailMessage, file_path: Path) -> None:
-    """Додає вкладення до електронного листа безпосередньо з файлу."""
-
-    maintype, subtype = files.get_mime(file_path)
-
-    with open(file_path, 'rb') as f:
-        file_data = f.read()
-        msg.add_attachment(
-            file_data, maintype=maintype, subtype=subtype, filename=file_path.name
-        )

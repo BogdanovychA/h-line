@@ -11,12 +11,6 @@ class EmailError(Exception):
     pass
 
 
-class EmailFileNotFoundError(EmailError):
-    """Файл для вкладення не знайдено"""
-
-    pass
-
-
 class EmailSendError(EmailError):
     """Помилка під час SMTP-сесії"""
 
