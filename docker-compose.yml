@@ -17,3 +17,12 @@ services:
       - ./docker_data/locales:/app/src/assets/locales
     ports:
       - "8081:8000"
+
+  cloudflared:
+#    image: cloudflare/cloudflared:latest
+    image: cloudflare/cloudflared:2026.7.3
+    container_name: h-line-cloudflared
+    restart: always
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE__TUNNEL_TOKEN}
+    depends_on:
+      - h-line
