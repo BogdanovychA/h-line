@@ -1,0 +1,31 @@
+<dialog open id="about-dialog">
+  <article class="dialog-content" style="text-align: center;">
+    <header>
+      <button aria-label="Close"
+              rel="prev"
+              onclick="document.getElementById('about-dialog').remove()"></button>
+      <h3>{{ fluent.get("about-title") }}</h3>
+    </header>
+
+    <img src="/images/h-line-logo-no_bg.png"
+         alt="H-Line Logo"
+         style="max-width: 150px; margin: 1rem auto; display: block;">
+
+    <h4>H-Line</h4>
+    <p>{{ fluent.get("version", version=version) }}</p>
+    <p>{{ fluent.get("license", license=license) }}</p>
+
+    <div style="margin: 1.5rem 0;">
+      <p><a href="https://github.com/BogdanovychA/h-line" target="_blank">{{ fluent.get("github") }}</a></p>
+      <p><a href="https://sies.gov.ua/" target="_blank">{{ fluent.get("sies") }}</a></p>
+    </div>
+
+    <footer>
+      <button type="button"
+              class="secondary"
+              onclick="document.getElementById('about-dialog').remove()">
+        {{ fluent.get("back") }}
+      </button>
+    </footer>
+  </article>
+</dialog>

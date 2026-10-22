@@ -1,0 +1,29 @@
+<dialog open id="author-dialog">
+  <article class="dialog-content" style="text-align: center;">
+    <header>
+      <button aria-label="Close"
+              rel="prev"
+              onclick="document.getElementById('author-dialog').remove()"></button>
+      <h3>{{ fluent.get("author-title") }}</h3>
+    </header>
+
+    <img src="/images/bogdanovych-900x900.jpg"
+         alt="{{ fluent.get('author-name') }}"
+         style="max-width: 160px; border-radius: 50%; margin: 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+
+    <h4>{{ fluent.get("author-name") }}</h4>
+
+    <div style="margin: 1.5rem 0;">
+      <p><a href="https://www.bogdanovych.org" target="_blank">{{ fluent.get("home-page") }}</a></p>
+      <p><a href="https://apps.bogdanovych.org" target="_blank">{{ fluent.get("other-apps") }}</a></p>
+    </div>
+
+    <footer>
+      <button type="button"
+              class="secondary"
+              onclick="document.getElementById('author-dialog').remove()">
+        {{ fluent.get("back") }}
+      </button>
+    </footer>
+  </article>
+</dialog>

@@ -1,0 +1,29 @@
+<div id="officer-section">
+  {% if officer.name and officer.position and officer.email %}
+    <div class="officer-banner">
+      <div class="officer-details">
+        <span>👤 <strong>{{ officer.name }}</strong> | {{ officer.position }} | <small>{{ officer.email }}</small></span>
+      </div>
+      <div>
+        <button class="outline contrast"
+                hx-get="/officer-modal"
+                hx-target="#modal-container"
+                hx-swap="innerHTML"
+                style="margin-bottom: 0;">
+          Змінити
+        </button>
+      </div>
+    </div>
+  {% else %}
+    <div class="officer-alert-needed">
+      <span>⚠️ <strong>Увага:</strong> Дані посадової особи не заповнені! Необхідно вказати ПІБ, посаду та email.</span>
+      <button class="contrast"
+              hx-get="/officer-modal"
+              hx-target="#modal-container"
+              hx-swap="innerHTML"
+              style="margin-bottom: 0;">
+        Вказати дані
+      </button>
+    </div>
+  {% endif %}
+</div>

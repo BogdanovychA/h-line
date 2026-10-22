@@ -1,0 +1,68 @@
+<div class="grid">
+  <label for="applicant_name">
+    {{ fluent.get("applicant-name") }}
+    <input type="text"
+           id="applicant_name"
+           name="applicant_name"
+           placeholder="{{ fluent.get('applicant-name-hint') }}"
+           required>
+  </label>
+
+  <label for="applicant_address">
+    {{ fluent.get("applicant-address") }}
+    <input type="text"
+           id="applicant_address"
+           name="applicant_address"
+           placeholder="{{ fluent.get('applicant-address-hint') }}"
+           required>
+  </label>
+</div>
+
+<div class="grid">
+  <label for="applicant_telephone">
+    {{ fluent.get("applicant-telephone") }}
+    <input type="tel"
+           id="applicant_telephone"
+           name="applicant_telephone"
+           placeholder="{{ fluent.get('applicant-telephone-hint') }}">
+  </label>
+
+  <label for="applicant_email">
+    {{ fluent.get("applicant-email") }}
+    <input type="email"
+           id="applicant_email"
+           name="applicant_email"
+           placeholder="{{ fluent.get('applicant-email-hint') }}">
+  </label>
+</div>
+
+<div class="grid">
+  <label for="applicant_category">
+    {{ fluent.get("applicant-category-label") }}
+    <select id="applicant_category" name="applicant_category" required>
+      <option value="" disabled selected>{{ fluent.get("not-selected") }}</option>
+      {% for key in category_keys %}
+        <option value="{{ fluent.get(key) }}">{{ fluent.get(key) }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label for="applicant_social_status">
+    {{ fluent.get("applicant-social-status-label") }}
+    <select id="applicant_social_status" name="applicant_social_status" required>
+      <option value="" disabled selected>{{ fluent.get("not-selected") }}</option>
+      {% for key in status_keys %}
+        <option value="{{ fluent.get(key) }}">{{ fluent.get(key) }}</option>
+      {% endfor %}
+    </select>
+  </label>
+</div>
+
+<label for="appeal_content">
+  {{ fluent.get("appeal-content") }} <span class="required">*</span>
+  <textarea id="appeal_content"
+            name="appeal_content"
+            rows="8"
+            placeholder="{{ fluent.get('appeal-content-hint') }}"
+            required>{{ appeal_content_default }}</textarea>
+</label>

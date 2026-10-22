@@ -1,0 +1,84 @@
+/* Custom styling for H-Line Web UI */
+:root {
+    --pico-font-size: 100%;
+}
+
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    display: inline-block;
+}
+
+.alert-success {
+    background-color: #2e7d32;
+    color: #ffffff;
+    padding: 0.85rem 1.25rem;
+    border-radius: var(--pico-border-radius, 8px);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.alert-error {
+    background-color: #c62828;
+    color: #ffffff;
+    padding: 0.85rem 1.25rem;
+    border-radius: var(--pico-border-radius, 8px);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.officer-banner {
+    background-color: var(--pico-card-background-color, #1b2836);
+    border: 1px solid var(--pico-muted-border-color, #37495d);
+    border-radius: var(--pico-border-radius, 8px);
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.officer-details strong {
+    color: var(--pico-primary, #1095c1);
+}
+
+.officer-alert-needed {
+    background-color: #b7791f;
+    color: #ffffff;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--pico-border-radius, 8px);
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.header-brand img {
+    height: 48px;
+    width: auto;
+}
+
+.required {
+    color: #e53935;
+    font-weight: bold;
+}
+
+.dialog-content {
+    max-width: 600px;
+    width: 100%;
+}

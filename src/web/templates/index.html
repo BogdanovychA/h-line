@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% include "partials/officer_badge.html" %}
+
+  <article>
+    <header>
+      <h2>{{ fluent.get("application-title") }}</h2>
+    </header>
+
+    <div id="alert-container"></div>
+
+    <form id="appeal-form"
+          hx-post="/submit"
+          hx-target="#alert-container"
+          hx-indicator="#submit-loading">
+
+      <div id="form-fields-container">
+        {% include "partials/form_fields.html" %}
+      </div>
+
+      <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem; flex-wrap: wrap;">
+        <button type="submit" id="submit-btn">
+          Сформувати та надіслати
+        </button>
+
+        <button type="button"
+                class="secondary outline"
+                hx-get="/form-fields"
+                hx-target="#form-fields-container"
+                hx-swap="innerHTML">
+          Очистити
+        </button>
+
+        <span id="submit-loading" class="htmx-indicator" aria-busy="true" style="margin-left: 0.5rem;">
+          Обробка звернення...
+        </span>
+      </div>
+    </form>
+  </article>
+{% endblock %}

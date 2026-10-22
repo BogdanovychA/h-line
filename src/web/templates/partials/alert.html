@@ -1,0 +1,9 @@
+{% if status == "success" %}
+  <div class="alert-success" role="alert">
+    ✅ {{ message }}
+  </div>
+{% elif status == "error" %}
+  <div class="alert-error" role="alert">
+    ❌ {{ message }}
+  </div>
+{% endif %}

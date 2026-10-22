@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ fluent.get("app-title") }}</title>
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="stylesheet" href="/static/css/pico.min.css">
+  <link rel="stylesheet" href="/static/css/custom.css">
+  <script src="/static/js/htmx.min.js"></script>
+</head>
+<body class="container">
+  <header>
+    <nav>
+      <ul>
+        <li>
+          <a href="/" class="header-brand">
+            <img src="/images/logo-sies-317x312.png" alt="Держенергонагляд">
+            <strong>H-Line</strong>
+          </a>
+        </li>
+      </ul>
+      <ul>
+        <li>
+          <button class="outline secondary"
+                  hx-get="/about-modal"
+                  hx-target="#modal-container"
+                  hx-swap="innerHTML">
+            {{ fluent.get("about-title") }}
+          </button>
+        </li>
+        <li>
+          <button class="outline secondary"
+                  hx-get="/author-modal"
+                  hx-target="#modal-container"
+                  hx-swap="innerHTML">
+            {{ fluent.get("author-title") }}
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer style="margin-top: 3rem; text-align: center; border-top: 1px solid var(--pico-muted-border-color); padding-top: 1.5rem;">
+    <p><small>{{ fluent.get("required-fields") }}</small></p>
+    <p><small>&copy; 2026 Андрій Богданович | <a href="https://sies.gov.ua/" target="_blank">{{ fluent.get("sies") }}</a> | <a href="https://github.com/BogdanovychA/h-line" target="_blank">{{ fluent.get("github") }}</a></small></p>
+  </footer>
+
+  <div id="modal-container"></div>
+</body>
+</html>

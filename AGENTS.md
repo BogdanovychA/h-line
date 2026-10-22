@@ -8,20 +8,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Install dependencies
 uv sync
 
-# Run as desktop app
+# Run as desktop app (Flet)
 uv run flet run
 
-# Run as web app
+# Run as web app (Flet)
 uv run flet run --web
+
+# Run HTMX Web App (FastAPI + HTMX + Pico.css)
+uv run python src/main_web.py
+
+# Run HTMX Web App with auto-reload (development)
+uv run uvicorn web.app:web_app --reload --port 8000
 
 # Run all tests
 pytest
 
 # Run a single test
 pytest tests/test_localization.py::test_ui_localization
+pytest tests/test_web_app.py
 
-# Format code
-black . && isort .
+# Lint and format code
+uv run ruff check --fix . && uv run ruff format .
 
 # Docker: rebuild and start
 docker-compose up -d --build
@@ -32,7 +39,7 @@ docker-compose up -d
 
 ## Architecture
 
-The app follows an `abstract → core/models → ui` layered flow.
+The app follows an `abstract → core/models → ui/web` layered flow.
 
 **`src/abstract/`** — interfaces only. `BaseTemplateManager` (document generation), `BaseGenerator`, `SMTPSenderBase`, `BaseSender`, `BaseSaver`, `BaseNameCreator`. These define contracts; no logic here.
 
@@ -42,11 +49,24 @@ The app follows an `abstract → core/models → ui` layered flow.
 
 **`src/config/`** — pydantic-settings classes with env-var prefixes: `APP__*`, `SERVER__*`, `EMAIL_SENDER__*`, `EMAIL_RECIPIENT__*`, `GOOGLE_ANALYTICS__*`. Source: `src/assets/.env`.
 
-**`src/ui/main.py`** — the wiring point. Registers generators and SMTP protocols into their registries, initializes `FluentManager`, builds `PandorasBox` (the DI container passed to every view), and handles routing via a `match page.route` block.
+**`src/ui/`** — Flet (Flutter-based) user interface:
+- `main.py` — the wiring point for Flet. Registers generators and SMTP protocols, initializes `FluentManager`, builds `PandorasBox` (DI container), and routes views.
+- `routes/` — one file per page: `root`, `application`, `settings`, `about`, `author`, `error404`. Each exports a `ROUTE` constant and a `build_view()` function.
+- `PandorasBox` (in `src/ui/utils/models.py`) — dataclass holding shared services: `storage` (FletStorage), `generator` (GlobalGenerator), `fluent` (FluentManager), `ga` (MeasurementAPI), `name_creator`, optional `saver`, optional `sender`.
 
-**`src/ui/routes/`** — one file per page: `root`, `application`, `settings`, `about`, `author`, `error404`. Each exports a `ROUTE` constant and a `build_view()` function.
+**`src/web/`** — Lightweight Web UI (FastAPI + HTMX + Jinja2 + Pico.css):
+- `app.py` — FastAPI application providing lightweight HTML-first routes:
+  - `GET /` — main page with appeal form and officer status banner
+  - `POST /submit` — HTMX appeal submission endpoint (full validation, file generation, email/disk dispatch, OOB form reset)
+  - `GET /officer-modal` & `POST /officer` — modal dialog for configuring officer credentials persisted via cookies
+  - `GET /about-modal` & `GET /author-modal` — informational modal dialogs
+  - `GET /form-fields` — partial rendering for resetting form state
+- `templates/` — Jinja2 HTML5 templates (`base.html`, `index.html`) and partials (`partials/`)
+- `static/` — Local vendored assets (`htmx.min.js`, `pico.min.css`, `custom.css`) for 100% offline operation without external CDN dependencies
 
-**`PandorasBox`** (in `src/ui/utils/models.py`) — a dataclass holding all shared services: `storage` (FletStorage), `generator` (GlobalGenerator), `fluent` (FluentManager), `ga` (MeasurementAPI), `name_creator`, optional `saver`, optional `sender`. Passed as `box` into every view builder.
+**`src/main.py`** — Runner entrypoint for the Flet desktop/web app.
+
+**`src/main_web.py`** — Runner entrypoint for the FastAPI + HTMX web application.
 
 ## Key Conventions
 
@@ -60,11 +80,13 @@ Same pattern for SMTP protocols via `EmailManager.register(SMTPProtocol.X, MyCla
 
 **Docker versioning** — `APP_VERSION` in the root `.env` tags the image. `pull_policy: missing` means the image is never auto-pulled or rebuilt if it already exists locally; use `--build` explicitly when you want a new build.
 
-**No database** — persistence is client-side only via `FletStorage` (SharedPreferences wrapper). Stored keys: `client_id`, `officer_name`, `officer_position`, `officer_email`.
+**No database** — persistence is client-side only:
+- In Flet: via `FletStorage` (SharedPreferences wrapper). Stored keys: `client_id`, `officer_name`, `officer_position`, `officer_email`.
+- In Web/HTMX: via URL-encoded HTTP cookies (`client_id`, `officer_name`, `officer_position`, `officer_email`).
 
 ## Testing
 
-The project has 65 tests covering core functionality:
+The project has 71 tests covering core functionality and the web layer:
 
 **`tests/test_abstract_layer.py`** — 6 tests for abstract layer registries and managers:
 - GlobalGenerator registration and class retrieval
@@ -120,7 +142,15 @@ The project has 65 tests covering core functionality:
 - SMTPSenderTLS success path and STARTTLS negotiation flow
 - Exception handling and translation to `EmailSendError` on connection/authentication failures
 
-**Test coverage:** Core business logic (`src/core/`, `src/abstract/`, `src/utils/`, `src/config/`, `src/models/`) is fully tested with high coverage. Run with `pytest` or `uv run pytest`.
+**`tests/test_web_app.py`** — 6 tests for FastAPI + HTMX interface:
+- `test_index_page` — GET `/` route, HTTP 200, asset references, automatic `client_id` cookie creation
+- `test_about_and_author_modals` — GET `/about-modal` and `/author-modal` modal dialog content
+- `test_officer_modal_and_save` — GET `/officer-modal`, form validation, POST `/officer` and cookie emission
+- `test_submit_without_officer` — POST `/submit` requirement for officer profile configuration
+- `test_submit_validation_errors` — POST `/submit` validation of applicant name, phone numbers, and categories
+- `test_submit_success` — Successful appeal submission, document generation delegation, OOB form reset, and analytics
+
+**Test coverage:** Core business logic (`src/core/`, `src/abstract/`, `src/utils/`, `src/config/`, `src/models/`) and Web UI (`src/web/`) are fully tested with high coverage. Run with `pytest` or `uv run pytest`.
 
 ## Modules Not Yet Covered by Tests
 

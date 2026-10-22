@@ -1,0 +1,58 @@
+<dialog open id="officer-dialog">
+  <article class="dialog-content">
+    <header>
+      <button aria-label="Close"
+              rel="prev"
+              onclick="document.getElementById('officer-dialog').remove()"></button>
+      <h3>{{ fluent.get("main-view-instruction") }}</h3>
+    </header>
+
+    <div id="officer-modal-alert"></div>
+
+    <form hx-post="/officer"
+          hx-target="#officer-modal-alert"
+          hx-indicator="#officer-loading">
+      <label for="officer_name">
+        {{ fluent.get("officer-name-label") }} <span class="required">*</span>
+        <input type="text"
+               id="officer_name"
+               name="officer_name"
+               value="{{ officer.name }}"
+               placeholder="{{ fluent.get('officer-name-hint') }}"
+               required>
+      </label>
+
+      <label for="officer_position">
+        {{ fluent.get("officer-position-label") }} <span class="required">*</span>
+        <input type="text"
+               id="officer_position"
+               name="officer_position"
+               value="{{ officer.position }}"
+               placeholder="{{ fluent.get('officer-position-hint') }}"
+               required>
+      </label>
+
+      <label for="officer_email">
+        {{ fluent.get("officer-email-label") }} <span class="required">*</span>
+        <input type="email"
+               id="officer_email"
+               name="officer_email"
+               value="{{ officer.email }}"
+               placeholder="{{ fluent.get('officer-email-hint') }}"
+               required>
+      </label>
+
+      <footer>
+        <button type="button"
+                class="secondary"
+                onclick="document.getElementById('officer-dialog').remove()">
+          {{ fluent.get("back") }}
+        </button>
+        <button type="submit">
+          Зберегти
+        </button>
+        <span id="officer-loading" class="htmx-indicator" aria-busy="true"></span>
+      </footer>
+    </form>
+  </article>
+</dialog>
