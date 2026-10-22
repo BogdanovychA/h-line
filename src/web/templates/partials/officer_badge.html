@@ -1,4 +1,4 @@
-<div id="officer-section">
+<div id="officer-section"{% if oob %} hx-swap-oob="outerHTML"{% endif %}>
   {% if officer.name and officer.position and officer.email %}
     <div class="officer-banner">
       <div class="officer-details">

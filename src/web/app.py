@@ -247,18 +247,15 @@ async def save_officer(
     officer_dict = {"name": name, "position": position, "email": email}
     ctx = _common_context(request)
     ctx["officer"] = officer_dict
+    ctx["oob"] = True
 
-    # Render badge partial with OOB swap for the officer section and JS to close dialog
+    # Render badge partial with OOB swap to update the header banner and close the modal
     badge_html = templates.get_template("partials/officer_badge.html").render(ctx)
 
     html_response = f"""
     {badge_html}
-    <script>
-      (function() {{
-        var dlg = document.getElementById('officer-dialog');
-        if (dlg) dlg.remove();
-      }})();
-    </script>
+    <div id="modal-container" hx-swap-oob="innerHTML"></div>
+    <div id="alert-container" hx-swap-oob="innerHTML"></div>
     """
 
     res = HTMLResponse(content=html_response)

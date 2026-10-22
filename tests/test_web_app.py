@@ -60,6 +60,7 @@ def test_officer_modal_and_save(client):
     )
     assert save_res.status_code == 200
     assert "Шевченко Тарас Григорович" in save_res.text
+    assert 'hx-swap-oob="outerHTML"' in save_res.text
     assert "officer_name" in save_res.cookies
 
 
