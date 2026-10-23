@@ -13,8 +13,8 @@ import uuid
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import FastAPI, Form, Request, Response
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Form, Query, Request, Response
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fluent_manager import FluentManager
@@ -59,12 +59,26 @@ email_manager.EmailManager.register(
     SMTPProtocol.SSL, smtp_implementations.SMTPSenderSSL
 )
 
-# Initialize Fluent Localization Manager
-fluent_mgr = FluentManager(
-    locales=[app_config.settings.start_locale],
-    locales_path=str(app_config.settings.locales_dir),
-    default_locale=app_config.settings.default_locale,
-)
+# Supported locales and caching
+AVAILABLE_LOCALES = ["uk", "en"]
+_fluent_cache: dict[str, FluentManager] = {}
+
+
+def get_fluent(locale: str | None = None) -> FluentManager:
+    """Отримує екземпляр FluentManager для вказаної локалі з кешу."""
+    if not locale or locale not in AVAILABLE_LOCALES:
+        locale = app_config.settings.start_locale
+    if locale not in _fluent_cache:
+        _fluent_cache[locale] = FluentManager(
+            locales=[locale],
+            locales_path=str(app_config.settings.locales_dir),
+            default_locale=app_config.settings.default_locale,
+        )
+    return _fluent_cache[locale]
+
+
+# Default instance for backward compatibility
+fluent_mgr = get_fluent(app_config.settings.start_locale)
 
 # Global services
 generator = application_generator.GlobalGenerator(fluent=fluent_mgr)
@@ -83,7 +97,8 @@ ga_client = MeasurementAPI(
 BASE_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = BASE_DIR / "templates"
 STATIC_DIR = BASE_DIR / "static"
-ASSETS_IMAGES_DIR = app_config.settings.assets_dir / "images"
+ASSETS_DIR = app_config.settings.assets_dir
+ASSETS_IMAGES_DIR = ASSETS_DIR / "images"
 
 CATEGORY_KEYS = [
     "cat-war-participant",
@@ -133,6 +148,19 @@ web_app = FastAPI(
     version=app_config.settings.version,
 )
 
+
+# Favicon endpoints (registered before mount to avoid static shadow)
+@web_app.get("/favicon.ico", include_in_schema=False)
+@web_app.get("/favicon.png", include_in_schema=False)
+@web_app.get("/images/favicon.png", include_in_schema=False)
+async def favicon():
+    """Повертає фавіконку застосунку."""
+    favicon_path = ASSETS_DIR / "favicon.png"
+    if favicon_path.exists():
+        return FileResponse(favicon_path, media_type="image/png")
+    return Response(status_code=404)
+
+
 # Mount static files
 web_app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 if ASSETS_IMAGES_DIR.exists():
@@ -152,6 +180,13 @@ def _get_cookie_value(raw_val: str | None) -> str:
         return raw_val
 
 
+def _get_locale(request: Request) -> str:
+    cookie_loc = request.cookies.get("locale")
+    if cookie_loc in AVAILABLE_LOCALES:
+        return cookie_loc
+    return app_config.settings.start_locale
+
+
 def _get_officer_context(request: Request) -> dict[str, str]:
     return {
         "name": _get_cookie_value(request.cookies.get("officer_name")),
@@ -161,15 +196,19 @@ def _get_officer_context(request: Request) -> dict[str, str]:
 
 
 def _common_context(request: Request) -> dict:
+    locale = _get_locale(request)
+    fm = get_fluent(locale)
     return {
         "request": request,
-        "fluent": fluent_mgr,
+        "fluent": fm,
+        "current_locale": locale,
+        "available_locales": AVAILABLE_LOCALES,
         "officer": _get_officer_context(request),
         "version": app_config.settings.version,
         "license": app_config.settings.license,
         "category_keys": CATEGORY_KEYS,
         "status_keys": STATUS_KEYS,
-        "appeal_content_default": fluent_mgr.get("appeal-content-default"),
+        "appeal_content_default": fm.get("appeal-content-default"),
     }
 
 
@@ -191,6 +230,32 @@ async def index(request: Request):
     return response
 
 
+@web_app.get("/set-locale", response_class=Response)
+@web_app.post("/set-locale", response_class=Response)
+async def set_locale(
+    request: Request,
+    locale: Annotated[str, Query()] = "",
+):
+    """Змінює мову інтерфейсу, зберігає у cookies та оновлює сторінку."""
+    if not locale:
+        form_data = await request.form()
+        locale = str(form_data.get("locale", ""))
+
+    if locale not in AVAILABLE_LOCALES:
+        locale = app_config.settings.start_locale
+
+    if "hx-request" in request.headers:
+        response = Response(status_code=200)
+        response.headers["HX-Refresh"] = "true"
+    else:
+        response = RedirectResponse(url="/", status_code=303)
+
+    response.set_cookie(
+        "locale", locale, max_age=365 * 24 * 3600, path="/", httponly=False
+    )
+    return response
+
+
 @web_app.get("/officer-modal", response_class=HTMLResponse)
 async def officer_modal(request: Request):
     """Повертає модальне вікно редагування даних посадової особи."""
@@ -203,12 +268,12 @@ async def officer_modal(request: Request):
 @web_app.post("/officer", response_class=HTMLResponse)
 async def save_officer(
     request: Request,
-    response: Response,
     officer_name: Annotated[str, Form()] = "",
     officer_position: Annotated[str, Form()] = "",
     officer_email: Annotated[str, Form()] = "",
 ):
     """Зберігає дані посадової особи у cookies та оновлює шапку."""
+    fm = get_fluent(_get_locale(request))
     name = officer_name.strip()
     if not name:
         return templates.TemplateResponse(
@@ -216,7 +281,7 @@ async def save_officer(
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": fluent_mgr.get("error-enter-last-name"),
+                "message": fm.get("error-enter-last-name"),
             },
         )
 
@@ -227,7 +292,7 @@ async def save_officer(
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": fluent_mgr.get("error-enter-position"),
+                "message": fm.get("error-enter-position"),
             },
         )
 
@@ -240,7 +305,7 @@ async def save_officer(
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": fluent_mgr.get("error-enter-email"),
+                "message": fm.get("error-enter-email"),
             },
         )
 
@@ -266,13 +331,38 @@ async def save_officer(
     return res
 
 
+@web_app.post("/officer/clear", response_class=HTMLResponse)
+async def clear_officer(request: Request):
+    """Очищає дані посадової особи у cookies та оновлює шапку."""
+    ctx = _common_context(request)
+    ctx["officer"] = {"name": "", "position": "", "email": ""}
+    ctx["oob"] = True
+
+    badge_html = templates.get_template("partials/officer_badge.html").render(ctx)
+
+    html_response = f"""
+    {badge_html}
+    <div id="modal-container" hx-swap-oob="innerHTML"></div>
+    <div id="alert-container" hx-swap-oob="innerHTML"></div>
+    """
+
+    res = HTMLResponse(content=html_response)
+    res.delete_cookie("officer_name", path="/")
+    res.delete_cookie("officer_position", path="/")
+    res.delete_cookie("officer_email", path="/")
+    return res
+
+
 @web_app.get("/form-fields", response_class=HTMLResponse)
 async def form_fields(request: Request):
-    """Повертає чисті поля форми для скидання стану."""
+    """Повертає чисті поля форми для скидання стану та очищає контейнер сповіщень."""
     ctx = _common_context(request)
-    return templates.TemplateResponse(
-        request=request, name="partials/form_fields.html", context=ctx
-    )
+    fields_html = templates.get_template("partials/form_fields.html").render(ctx)
+    response_html = f"""
+    {fields_html}
+    <div id="alert-container" hx-swap-oob="innerHTML"></div>
+    """
+    return HTMLResponse(content=response_html)
 
 
 @web_app.get("/about-modal", response_class=HTMLResponse)
@@ -305,6 +395,7 @@ async def submit_appeal(
     appeal_content: Annotated[str, Form()] = "",
 ):
     """Обробляє надсилання форми звернення громадянина через HTMX."""
+    fm = get_fluent(_get_locale(request))
     officer = _get_officer_context(request)
     if not (officer["name"] and officer["position"] and officer["email"]):
         return templates.TemplateResponse(
@@ -312,7 +403,7 @@ async def submit_appeal(
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": "Спочатку заповніть дані посадової особи (кнопка 'Вказати дані')!",
+                "message": fm.get("error-fill-officer-first"),
             },
         )
 
@@ -324,7 +415,7 @@ async def submit_appeal(
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": fluent_mgr.get("error-enter-name"),
+                "message": fm.get("error-enter-name"),
             },
         )
 
@@ -335,7 +426,7 @@ async def submit_appeal(
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": fluent_mgr.get("error-enter-address"),
+                "message": fm.get("error-enter-address"),
             },
         )
 
@@ -349,7 +440,7 @@ async def submit_appeal(
                 name="partials/alert.html",
                 context={
                     "status": "error",
-                    "message": fluent_mgr.get("error-enter-phone"),
+                    "message": fm.get("error-enter-phone"),
                 },
             )
 
@@ -363,19 +454,19 @@ async def submit_appeal(
                 name="partials/alert.html",
                 context={
                     "status": "error",
-                    "message": fluent_mgr.get("error-enter-email"),
+                    "message": fm.get("error-enter-email"),
                 },
             )
 
     content = appeal_content.strip()
-    default_content = fluent_mgr.get("appeal-content-default").strip()
+    default_content = fm.get("appeal-content-default").strip()
     if not content or content == default_content:
         return templates.TemplateResponse(
             request=request,
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": fluent_mgr.get("error-enter-content"),
+                "message": fm.get("error-enter-content"),
             },
         )
 
@@ -385,7 +476,7 @@ async def submit_appeal(
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": fluent_mgr.get("error-select-category"),
+                "message": fm.get("error-select-category"),
             },
         )
 
@@ -395,7 +486,7 @@ async def submit_appeal(
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": fluent_mgr.get("error-select-social-status"),
+                "message": fm.get("error-select-social-status"),
             },
         )
 
@@ -418,30 +509,31 @@ async def submit_appeal(
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": fluent_mgr.get("error-create-appeal", error=str(e)),
+                "message": fm.get("error-create-appeal", error=str(e)),
             },
         )
 
     # 3. Generate file
     try:
-        buffer = await asyncio.to_thread(generator.generate_application, appeal)
+        doc_generator = application_generator.GlobalGenerator(fluent=fm)
+        buffer = await asyncio.to_thread(doc_generator.generate_application, appeal)
         if buffer is None:
             return templates.TemplateResponse(
                 request=request,
                 name="partials/alert.html",
                 context={
                     "status": "error",
-                    "message": fluent_mgr.get("error-generate-application"),
+                    "message": fm.get("error-generate-application"),
                 },
             )
 
-        file_name = name_creator.create_file_name(generator.file_type)
+        file_name = name_creator.create_file_name(doc_generator.file_type)
 
         # 4. Email sender
         if app_config.settings.send_to_email:
             try:
                 sender = application_sender.EmailSender(
-                    fluent=fluent_mgr, cc_recipients=[officer["email"]]
+                    fluent=fm, cc_recipients=[officer["email"]]
                 )
                 await asyncio.to_thread(sender.send, buffer, file_name)
             except EmailSendError:
@@ -451,14 +543,15 @@ async def submit_appeal(
                     name="partials/alert.html",
                     context={
                         "status": "error",
-                        "message": fluent_mgr.get("error-send-email"),
+                        "message": fm.get("error-send-email"),
                     },
                 )
 
         # 5. File saver
-        if file_saver is not None:
+        if app_config.settings.save_to_disk:
             try:
-                await asyncio.to_thread(file_saver.save, buffer, file_name)
+                saver = application_saver.FileSaver(fluent=fm)
+                await asyncio.to_thread(saver.save, buffer, file_name)
             except PermissionError:
                 logger.exception("Error saving file to disk")
                 return templates.TemplateResponse(
@@ -466,7 +559,7 @@ async def submit_appeal(
                     name="partials/alert.html",
                     context={
                         "status": "error",
-                        "message": fluent_mgr.get("error-save-file"),
+                        "message": fm.get("error-save-file"),
                     },
                 )
 
@@ -486,7 +579,7 @@ async def submit_appeal(
             name="partials/alert.html",
             context={
                 "status": "error",
-                "message": f"Неочікувана помилка: {e}",
+                "message": fm.get("unexpected-error", error=str(e)),
             },
         )
 
@@ -494,7 +587,7 @@ async def submit_appeal(
     ctx = _common_context(request)
     form_reset_html = templates.get_template("partials/form_fields.html").render(ctx)
 
-    success_msg = fluent_mgr.get("success-appeal-fixed")
+    success_msg = fm.get("success-appeal-fixed")
     response_html = f"""
     <div class="alert-success" role="alert">
       ✅ {success_msg}

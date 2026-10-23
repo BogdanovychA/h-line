@@ -4,8 +4,7 @@
     <input type="text"
            id="applicant_name"
            name="applicant_name"
-           placeholder="{{ fluent.get('applicant-name-hint') }}"
-           required>
+           placeholder="{{ fluent.get('applicant-name-hint') }}">
   </label>
 
   <label for="applicant_address">
@@ -13,8 +12,7 @@
     <input type="text"
            id="applicant_address"
            name="applicant_address"
-           placeholder="{{ fluent.get('applicant-address-hint') }}"
-           required>
+           placeholder="{{ fluent.get('applicant-address-hint') }}">
   </label>
 </div>
 
@@ -39,7 +37,7 @@
 <div class="grid">
   <label for="applicant_category">
     {{ fluent.get("applicant-category-label") }}
-    <select id="applicant_category" name="applicant_category" required>
+    <select id="applicant_category" name="applicant_category">
       <option value="" disabled selected>{{ fluent.get("not-selected") }}</option>
       {% for key in category_keys %}
         <option value="{{ fluent.get(key) }}">{{ fluent.get(key) }}</option>
@@ -49,7 +47,7 @@
 
   <label for="applicant_social_status">
     {{ fluent.get("applicant-social-status-label") }}
-    <select id="applicant_social_status" name="applicant_social_status" required>
+    <select id="applicant_social_status" name="applicant_social_status">
       <option value="" disabled selected>{{ fluent.get("not-selected") }}</option>
       {% for key in status_keys %}
         <option value="{{ fluent.get(key) }}">{{ fluent.get(key) }}</option>
@@ -63,6 +61,5 @@
   <textarea id="appeal_content"
             name="appeal_content"
             rows="8"
-            placeholder="{{ fluent.get('appeal-content-hint') }}"
-            required>{{ appeal_content_default }}</textarea>
+            placeholder="{{ fluent.get('appeal-content-hint') }}">{{ appeal_content_default }}</textarea>
 </label>

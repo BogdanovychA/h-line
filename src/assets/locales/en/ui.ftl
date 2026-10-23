@@ -122,3 +122,16 @@ target-page = Target page: {$route}
 required-fields = * — required fields
 officer-data = Your data: {$name}; {$position}; {$email}
 back = Back
+
+# Web UI elements
+submit-button = Generate and send
+clear-button = Clear
+processing-appeal = Processing appeal...
+officer-edit = Edit
+officer-reset = Reset
+officer-alert-needed = Officer details are not filled in! Please provide Full Name, position, and email.
+officer-fill-data = Enter details
+officer-save = Save
+error-fill-officer-first = Please fill in officer details first (click 'Enter details')!
+unexpected-error = Unexpected error: {$error}
+attention = Attention:

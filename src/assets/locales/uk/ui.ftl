@@ -122,3 +122,16 @@ target-page = Цільова сторінка: {$route}
 required-fields = * — обов'язкові поля
 officer-data = Ваші дані: {$name}; {$position}; {$email}
 back = Назад
+
+# Web UI elements
+submit-button = Сформувати та надіслати
+clear-button = Очистити
+processing-appeal = Обробка звернення...
+officer-edit = Змінити
+officer-reset = Скинути
+officer-alert-needed = Дані посадової особи не заповнені! Необхідно вказати ПІБ, посаду та email.
+officer-fill-data = Вказати дані
+officer-save = Зберегти
+error-fill-officer-first = Спочатку заповніть дані посадової особи (кнопка 'Вказати дані')!
+unexpected-error = Неочікувана помилка: {$error}
+attention = Увага:

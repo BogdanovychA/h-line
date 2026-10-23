@@ -11,17 +11,21 @@
     <div id="alert-container"></div>
 
     <form id="appeal-form"
+          novalidate
           hx-post="/submit"
           hx-target="#alert-container"
+          hx-swap="innerHTML show:#alert-container:top"
           hx-indicator="#submit-loading">
 
       <div id="form-fields-container">
         {% include "partials/form_fields.html" %}
       </div>
 
+      <p style="margin-top: 0.5rem; margin-bottom: 0.5rem;"><small>{{ fluent.get("required-fields") }}</small></p>
+
       <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem; flex-wrap: wrap;">
         <button type="submit" id="submit-btn">
-          Сформувати та надіслати
+          {{ fluent.get("submit-button") }}
         </button>
 
         <button type="button"
@@ -29,11 +33,11 @@
                 hx-get="/form-fields"
                 hx-target="#form-fields-container"
                 hx-swap="innerHTML">
-          Очистити
+          {{ fluent.get("clear-button") }}
         </button>
 
         <span id="submit-loading" class="htmx-indicator" aria-busy="true" style="margin-left: 0.5rem;">
-          Обробка звернення...
+          {{ fluent.get("processing-appeal") }}
         </span>
       </div>
     </form>

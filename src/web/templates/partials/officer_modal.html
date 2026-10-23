@@ -10,6 +10,7 @@
     <div id="officer-modal-alert"></div>
 
     <form hx-post="/officer"
+          novalidate
           hx-target="#officer-modal-alert"
           hx-indicator="#officer-loading">
       <label for="officer_name">
@@ -18,8 +19,7 @@
                id="officer_name"
                name="officer_name"
                value="{{ officer.name }}"
-               placeholder="{{ fluent.get('officer-name-hint') }}"
-               required>
+               placeholder="{{ fluent.get('officer-name-hint') }}">
       </label>
 
       <label for="officer_position">
@@ -28,8 +28,7 @@
                id="officer_position"
                name="officer_position"
                value="{{ officer.position }}"
-               placeholder="{{ fluent.get('officer-position-hint') }}"
-               required>
+               placeholder="{{ fluent.get('officer-position-hint') }}">
       </label>
 
       <label for="officer_email">
@@ -38,8 +37,7 @@
                id="officer_email"
                name="officer_email"
                value="{{ officer.email }}"
-               placeholder="{{ fluent.get('officer-email-hint') }}"
-               required>
+               placeholder="{{ fluent.get('officer-email-hint') }}">
       </label>
 
       <footer>
@@ -48,8 +46,17 @@
                 onclick="document.getElementById('officer-dialog').remove()">
           {{ fluent.get("back") }}
         </button>
+        {% if officer.name %}
+          <button type="button"
+                  class="outline secondary"
+                  hx-post="/officer/clear"
+                  hx-target="#officer-section"
+                  hx-swap="outerHTML">
+            {{ fluent.get("officer-reset") }}
+          </button>
+        {% endif %}
         <button type="submit">
-          Зберегти
+          {{ fluent.get("officer-save") }}
         </button>
         <span id="officer-loading" class="htmx-indicator" aria-busy="true"></span>
       </footer>

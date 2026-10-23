@@ -4,25 +4,32 @@
       <div class="officer-details">
         <span>👤 <strong>{{ officer.name }}</strong> | {{ officer.position }} | <small>{{ officer.email }}</small></span>
       </div>
-      <div>
+      <div style="display: flex; gap: 0.5rem; align-items: center;">
         <button class="outline contrast"
                 hx-get="/officer-modal"
                 hx-target="#modal-container"
                 hx-swap="innerHTML"
                 style="margin-bottom: 0;">
-          Змінити
+          {{ fluent.get("officer-edit") }}
+        </button>
+        <button class="outline secondary"
+                hx-post="/officer/clear"
+                hx-target="#officer-section"
+                hx-swap="outerHTML"
+                style="margin-bottom: 0;">
+          {{ fluent.get("officer-reset") }}
         </button>
       </div>
     </div>
   {% else %}
     <div class="officer-alert-needed">
-      <span>⚠️ <strong>Увага:</strong> Дані посадової особи не заповнені! Необхідно вказати ПІБ, посаду та email.</span>
+      <span>⚠️ <strong>{{ fluent.get("attention") }}</strong> {{ fluent.get("officer-alert-needed") }}</span>
       <button class="contrast"
               hx-get="/officer-modal"
               hx-target="#modal-container"
               hx-swap="innerHTML"
               style="margin-bottom: 0;">
-        Вказати дані
+        {{ fluent.get("officer-fill-data") }}
       </button>
     </div>
   {% endif %}
