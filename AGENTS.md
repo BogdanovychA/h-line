@@ -1,173 +1,341 @@
-# AGENTS.md
+# Інструкції та конвенції для розробників і AI-агентів: H-Line
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Цей документ визначає архітектуру проєкту, правила розробки, конвенції локалізації, обмеження та критичні процеси збірки й тестування застосунку **H-Line (Hotline App)** — відкритої системи автоматизації фіксації та обробки звернень громадян в органах державної влади та місцевого самоврядування.
 
-## Commands
+---
+
+## 1. Структура проєкту
+
+Проєкт реалізовано мовою **Python (>=3.12)** з використанням двох паралельних інтерфейсних шарів: **Flet** (для кросплатформного Desktop/Web) та **FastAPI + HTMX + Jinja2 + Pico.css** (для легкого автономного Web). Управління залежностями здійснюється через менеджер пакетів **uv**.
+
+```
+.
+├── AGENTS.md               # Цей файл (інструкції для системних агентів та розробників)
+├── CLAUDE.md -> AGENTS.md  # Символічне посилання для Claude Code
+├── GEMINI.md -> AGENTS.md  # Символічне посилання для Gemini CLI
+├── README.md               # Публічна документація проєкту
+├── pyproject.toml          # Залежності, метадані та конфігурація інструментів (ruff, pytest, flet)
+├── uv.lock                 # Фіксація версій залежностей пакетного менеджера uv
+├── Dockerfile              # Мультистейдж Docker-образ для запуску веб-сервісу
+├── docker-compose.yml      # Конфігурація розгортання контейнера з прив'язкою томів
+├── .env.example            # Зразок кореневого конфігураційного файлу оточення (APP_VERSION)
+├── .env                    # Кореневий файл конфігурації оточення (ігнорується Git)
+├── .pre-commit-config.yaml # Налаштування Git pre-commit хуків (ruff)
+├── .dockerignore           # Виключення для Docker збірки
+├── .gitignore              # Виключення Git
+├── AUTHORS.md              # Інформація про авторів проєкту
+├── CITATION.cff            # Метадані цитування наукових праць / DOI
+├── CONTRIBUTING.md         # Правила для контриб'юторів
+├── LICENSE                 # Текст ліцензії EUPL-1.2
+├── NOTICE                  # Юридичні повідомлення ліцензування
+├── SECURITY.md             # Політика звітування про вразливості
+├── bin/                    # Допоміжні скрипти автоматизації та обслуговування
+├── docs/                   # Розширена технічна документація
+├── temp/                   # Тимчасові файли локальної розробки (ігнорується Git)
+├── docker_data/            # Дані для монтування у Docker-контейнер
+│   ├── output/             # Директорія для згенерованих звернень у контейнері
+│   ├── templates/          # Користувацькі шаблони документів
+│   └── locales/            # Користувацькі локалізаційні пакети
+├── tests/                  # Набір автоматизованих тестів (pytest)
+│   ├── test_abstract_layer.py         # Тести абстрактних реєстрів і базових класів
+│   ├── test_appeal_request.py         # Валідація Pydantic-моделі звернення AppealRequest
+│   ├── test_config.py                 # Тести завантаження налаштувань pydantic-settings
+│   ├── test_doc_txt_managers.py       # Тести рендерингу DOCX, Markdown та HTML шаблонів
+│   ├── test_email_manager.py          # Тести реєстру EmailManager та фабрики протоколів
+│   ├── test_emails_utils.py           # Тести формування буферів вкладень до листів
+│   ├── test_files_utils.py            # Тести створення директорій за датами, імен файлів та MIME
+│   ├── test_localization.py           # Тести FluentManager та каскадного фолбеку мов
+│   ├── test_message_factory.py        # Тести збірки поштових повідомлень AppealMessageFactory
+│   ├── test_models.py                 # Тести переліків (Enums) та кастомних помилок пошти
+│   ├── test_smtp_implementations.py   # Тести SMTP клієнтів (SSL / STARTTLS)
+│   └── test_web_app.py                # Тести FastAPI + HTMX веб-інтерфейсу та cookie-сесій
+└── src/                    # Вихідний код ядра та інтерфейсів
+    ├── main.py             # Точка входу для десктопного / веб Flet-застосунку
+    ├── main_web.py         # Точка входу для легкого веб-сервера FastAPI + HTMX
+    ├── abstract/           # Абстрактні інтерфейси та реєстри компонентів (Contracts)
+    │   ├── application_generator.py    # BaseTemplateManager, BaseGenerator, GlobalGenerator
+    │   ├── application_name_creator.py # BaseNameCreator, NameCreator
+    │   ├── application_saver.py        # BaseSaver, FileSaver
+    │   └── application_sender.py       # BaseSender, EmailSender
+    ├── core/               # Конкретні реалізації бізнес-логіки та протоколів
+    │   ├── doc_manager.py             # Генератор DOCX через docxtpl
+    │   ├── txt_manager.py             # Генератор текстових файлів (MD/HTML) через Jinja2
+    │   ├── email_manager.py           # Реєстр поштових протоколів EmailManager
+    │   ├── smtp_implementations.py    # Реалізації SMTPSenderTLS та SMTPSenderSSL
+    │   └── message_factory.py         # Фабрика формування листів AppealMessageFactory
+    ├── models/             # Структури даних, Pydantic-схеми та переліки
+    │   ├── appeal_request.py          # Основна модель звернення громадянина AppealRequest
+    │   ├── file_type.py               # Перелік FileType (DOCX, MD, HTML)
+    │   ├── smtp.py                    # Перелік SMTPProtocol (TLS, SSL)
+    │   ├── email_errors.py            # Ієрархія помилок пошти (EmailError, EmailSendError)
+    │   └── logging.py                 # Рівні логування та події аналітики EventName
+    ├── config/             # Конфігурація застосунку (Pydantic Settings)
+    │   ├── app.py                     # AppSettings (шляхи до файлів, шаблонів, мов за замовчуванням)
+    │   ├── server.py                  # ServerSettings (хост, порт, рівень логування)
+    │   ├── email_sender.py            # SenderSettings (реквізити SMTP-сервера)
+    │   ├── email_recipient.py         # RecipientSettings (список адрес отримувачів та копій)
+    │   └── google_analytics.py        # GoogleAnalytics (Measurement ID та API Secret)
+    ├── utils/              # Допоміжні утиліти
+    │   ├── files.py                   # Збереження на диск, генерація шляхів та унікальних імен
+    │   └── emails.py                  # Додавання вкладень із буферів пам'яті до MIME-листів
+    ├── ui/                 # Реалізація графічного інтерфейсу на Flet
+    │   ├── main.py                    # Ініціалізація Flet-вікна, DI контейнера PandorasBox та маршрутизація
+    │   ├── routes/                    # Екрани застосунку (views)
+    │   │   ├── root.py                # Стартовий екран авторизації посадової особи
+    │   │   ├── application.py         # Форма фіксації звернення громадянина
+    │   │   ├── settings.py            # Екран налаштувань (мова, тип файлу, протокол)
+    │   │   ├── about.py               # Інформація про застосунок
+    │   │   ├── author.py              # Інформація про розробника
+    │   │   └── error404.py            # Сторінка 404 помилки маршрутизації
+    │   └── utils/                     # Компоненти та сервісні класи Flet
+    │       ├── models.py              # Контейнер PandorasBox та модель Officer
+    │       ├── elements.py            # Фабрики повторюваних віджетів (кнопки, навігація)
+    │       └── style.py               # Стилізація, розміри та колірна палітра UI
+    ├── web/                # Легкий автономний веб-інтерфейс (FastAPI + HTMX)
+    │   ├── app.py                     # Маршрути FastAPI, обробка форм, OOB-оновлення HTMX
+    │   ├── templates/                 # Jinja2 HTML-шаблони
+    │   │   ├── base.html              # Базовий каркас із підключенням Pico.css та HTMX
+    │   │   ├── index.html             # Головна сторінка з формою та статусом оператора
+    │   │   └── partials/              # HTMX-фрагменти (модальні вікна, форма, сповіщення)
+    │   └── static/                    # Повністю локальні вендорні статичні ресурси
+    │       ├── css/                   # pico.min.css, custom.css
+    │       └── js/                    # htmx.min.js
+    └── assets/             # Ресурси та конфігурація за замовчуванням
+        ├── .env                       # Робочий конфіг застосунку (APP__*, SERVER__* тощо)
+        ├── .env.example               # Зразок конфігурації змінних оточення
+        ├── .env.prod                  # Зразок виробничої конфігурації
+        ├── icon.png                   # Іконка застосунку
+        ├── favicon.png                # Фавікон
+        ├── templates/                 # Шаблони звернень (application.docx, .md, .html)
+        ├── locales/                   # Файли локалізації Project Fluent
+        │   ├── uk/                    # Українська локаль (ui.ftl, mail.ftl, logs.ftl)
+        │   └── en/                    # Англійська локаль (ui.ftl, mail.ftl, logs.ftl)
+        └── images/                    # Логотипи та статичні зображення
+```
+
+---
+
+## 2. Технічні та архітектурні вимоги
+
+### 2.1. Шарувата архітектура (Layered Architecture)
+* **Принцип:** Застосунок суворо дотримується односпрямованого потоку залежностей:
+  `abstract` → `core` / `models` / `config` / `utils` → `ui` / `web`.
+* **Ізоляція абстракцій (`src/abstract/`):** Містить лише інтерфейси та базові класи-реєстри (`BaseTemplateManager`, `BaseGenerator`, `SMTPSenderBase`, `BaseSender`, `BaseSaver`, `BaseNameCreator`). Будь-яка пряма бізнес-логіка, рендеринг чи звернення до мережі в цьому шарі **суворо заборонені**.
+* **Конкретні реалізації (`src/core/`):** Реалізують контракти абстрактного шару (`DocManager`, `TxtManager`, `SMTPSenderTLS`, `SMTPSenderSSL`, `EmailManager`, `AppealMessageFactory`).
+* **Контейнер ін'єкції залежностей (Dependency Injection):**
+  * Для Flet-інтерфейсу спільні сервіси агрегуються у датакласі [`PandorasBox`](src/ui/utils/models.py) (`storage`, `generator`, `fluent`, `ga`, `name_creator`, `saver`, `sender`, `officer`).
+  * Для веб-шару реєстрація сервісів і менеджерів виконується на рівні модуля [`src/web/app.py`](src/web/app.py).
+
+### 2.2. Патерн реєстру (Registry Pattern) для розширення функціоналу
+* **Генератори документів:** Для додавання підтримки нового вихідного формату створення документів:
+  1. Реалізувати спадкоємця [`BaseTemplateManager`](src/abstract/application_generator.py) у `src/core/`.
+  2. Додати новий формат у перелік [`FileType`](src/models/file_type.py).
+  3. Зареєструвати новий генератор у точках входу через `GlobalGenerator.register(FileType.FORMAT, ManagerClass)`:
+     ```python
+     GlobalGenerator.register(FileType.PDF, MyPdfManager)
+     ```
+* **Поштові протоколи:** Для додавання нового протоколу або способу відправки листів:
+  1. Реалізувати спадкоємця [`SMTPSenderBase`](src/core/smtp_implementations.py) у `src/core/`.
+  2. Додати протокол у перелік [`SMTPProtocol`](src/models/smtp.py).
+  3. Зареєструвати його у реєстрі через `EmailManager.register(SMTPProtocol.PROTOCOL, SenderClass)`:
+     ```python
+     EmailManager.register(SMTPProtocol.CUSTOM, MyCustomSender)
+     ```
+
+### 2.3. Першочергова локалізація (Localization First & Project Fluent)
+* **Заборона хардкоду рядків:** Категорично заборонено хардкодити рядки інтерфейсу, теми листів, текст помилок та системні повідомлення безпосередньо в коді Python або шаблонах HTML.
+* **Структура каталогів перекладів:** Усі текстові константи виносяться у файли Project Fluent (`.ftl`) в каталозі `src/assets/locales/<locale>/`:
+  * `ui.ftl` — елементи керування, назви полів, підказки, кнопки, валідаційні повідомлення.
+  * `mail.ftl` — шаблони тем та тіла службових електронних листів.
+  * `logs.ftl` — системні повідомлення та журналювання дій.
+* **Доступ до локалізації:**
+  * У Flet: через `box.fluent.get("translation-key")` або з параметрами `box.fluent.get("greeting", name=user_name)`.
+  * У Web/FastAPI: через екземпляр [`FluentManager`](src/web/app.py), з прокиданням перекладів у контекст Jinja2-шаблонів або динамічним викликом хелпера.
+* **Фолбек:** Основна мова системи — українська (`uk`). У разі відсутності ключа у вибраній локалі система зобов'язана автоматично повертати значення з українського перекладу.
+
+### 2.4. Відсутність сервера баз даних (No-Database Architecture)
+* **Принцип:** Застосунок спроектовано як клієнтський інструмент без постійної серверної бази даних (RDBMS / NoSQL). Дані звернення не зберігаються у відкритому чи структурованому вигляді на сервері, крім сформованого артефакту (DOCX/MD/HTML) у вихідній директорії.
+* **Збереження стану оператора (Officer Profile):**
+  * **У Flet:** Використовується `FletStorage` (обгортка над нативним SharedPreferences платформи). Зберігаються ключі: `client_id`, `officer_name`, `officer_position`, `officer_email`.
+  * **У Web (FastAPI + HTMX):** Використовуються URL-encoded безпечні HTTP-кукі (`client_id`, `officer_name`, `officer_position`, `officer_email`). При першому відкритті генерується унікальний `client_id` (UUIDv4).
+* **Очищення форми:** Після успішного надсилання звернення форма скидається до початкового стану без збереження персональних даних заявника.
+
+### 2.5. Конфігурація та змінні оточення (Pydantic Settings)
+* **Організація налаштувань:** Усі параметри конфігурації типізовані через класи `pydantic-settings` у пакеті `src/config/`:
+  * `APP__*` ([`AppSettings`](src/config/app.py)) — шляхи до вихідних файлів, шаблонів, каталогів перекладів, формати за замовчуванням (`docx`), локаль за замовчуванням (`uk`).
+  * `SERVER__*` ([`ServerSettings`](src/config/server.py)) — хост, порт, рівень логування застосунку.
+  * `EMAIL_SENDER__*` ([`SenderSettings`](src/config/email_sender.py)) — параметри підключення до SMTP-сервера (хост, порт, логін, пароль, обраний протокол).
+  * `EMAIL_RECIPIENT__*` ([`RecipientSettings`](src/config/email_recipient.py)) — списки основних отримувачів звернень та копій (Cc/Bcc), шаблон теми.
+  * `GOOGLE_ANALYTICS__*` ([`GoogleAnalytics`](src/config/google_analytics.py)) — Measurement ID та API Secret для Measurement Protocol.
+* **Джерело конфігурації:** Основним файлом конфігурації застосунку є `src/assets/.env`. Кореневий `.env` використовується виключно для Docker та оркестрації (`APP_VERSION`).
+
+### 2.6. Валідація даних звернення (`AppealRequest`)
+* **Сувора типізація:** Вхідні дані формуються в Pydantic-модель [`AppealRequest`](src/models/appeal_request.py).
+* **Нормалізація номерів телефонів:** Номери телефонів заявників валідуються та нормалізуються за стандартом E.164 з використанням бібліотеки `phonenumbers` (за замовчуванням регіон `UA`).
+* **Класифікація звернень:** Підтримується офіційна класифікація звернень відповідно до Закону України «Про звернення громадян» (категорії заявників, соціальний стан, типи звернень: заява/клопотання, пропозиція/зауваження, скарга).
+* **Генерація контексту:** Метод `get_context()` моделі `AppealRequest` повертає словник значень із форматуванням дат у форматі `ДД.ММ.РРРР ГГ:ХХ:СС`, готовий для передачі у шаблонізатори DOCX та Jinja2.
+
+### 2.7. Генерація документів та вихідні директорії
+* **Іменування файлів:** Утиліта [`create_file_name`](src/utils/files.py) генерує унікальні імена файлів на основі дати, часу та UUID: `YYYY-MM-DD_HH-MM-SS_<uuid>.<ext>`.
+* **Ієрархія збереження:** Файли зберігаються у піддиректоріях, згрупованих за поточною датою: `<output_dir>/YYYY/MM/DD/`.
+* **Ізоляція шаблонів:** Шаблони за замовчуванням розташовані в `src/assets/templates/`. Підтримуються формати `application.docx` (DOCX-теги через Jinja-подібний синтаксис `docxtpl`), `application.md` та `application.html` (стандартні Jinja2-шаблони зі суворим режимом `StrictUndefined`).
+
+### 2.8. Поштова підсистема та безпека передачі
+* **Формування MIME:** Клас [`AppealMessageFactory`](src/core/message_factory.py) збирає багатокомпонентні листи (`multipart/mixed` та `multipart/alternative`), забезпечуючи коректне кодування заголовків UTF-8, додавання копій, прихованих копій та прикріплення сформованого документу безпосередньо з байтового буфера без необхідності попереднього запису на диск.
+* **Підтримка шифрування:** Реалізовано захищені поштові транспорти:
+  * [`SMTPSenderTLS`](src/core/smtp_implementations.py) — з'єднання зі стандартним портом (зазвичай 587) та обов'язковим узгодженням шифрування через команду `STARTTLS`.
+  * [`SMTPSenderSSL`](src/core/smtp_implementations.py) — пряме захищене з'єднання з обгорткою сокета в SSLContext (зазвичай порт 465).
+* **Ієрархія винятків:** Помилки аутентифікації та передачі транскодуються у кастомний виняток [`EmailSendError`](src/models/email_errors.py), що запобігає витоку внутрішніх мережевих стек-трейсів до користувача.
+
+### 2.9. Повна офлайн-автономність веб-інтерфейсу (No External CDN)
+* **Приватність та відмовостійкість:** Веб-інтерфейс (`src/web/`) не повинен завантажувати жодних ресурсів із зовнішніх CDN (Google Fonts, unpkg, cdnjs тощо).
+* **Вендорні ресурси:** Усі бібліотеки постачаються локально:
+  * `src/web/static/js/htmx.min.js` — бібліотека HTMX.
+  * `src/web/static/css/pico.min.css` — семантичний CSS-фреймворк Pico.css.
+  * `src/web/static/css/custom.css` — адаптивні кастомні стилі для форми та модальних вікон.
+* Застосунок повинен повноцінно працювати в закритих локальних мережах органів влади без доступу до Інтернету.
+
+### 2.10. Телеметрія та аналітика
+* **Measurement Protocol:** Для обліку завантажень інтерфейсу, відправок звернень та помилок використовується бібліотека `measurement-api` (Google Analytics 4).
+* **Безпечне вимкнення:** Якщо у змінних оточення відсутній `GOOGLE_ANALYTICS__MEASUREMENT_ID`, виклики аналітики автоматично блокуються без викидання помилок і без уповільнення обробки запитів.
+
+### 2.11. Контейнеризація та версіонування образу
+* **Тегування:** Тег образу Docker контролюється змінною `APP_VERSION` у кореневому файлі `.env`.
+* **Політика розгортання:** У `docker-compose.yml` встановлено директиву `pull_policy: missing`. Це гарантує стабільність: локальний зібраний образ ніколи не перезаписується автоматично без явної команди збірки `--build`.
+* **Монтування томів:** Для збереження даних поза контейнером використовуються директорії `docker_data/output`, `docker_data/templates` та `docker_data/locales`.
+
+---
+
+## 3. Команди запуску, розробки та тестування
+
+Усі операції з керування віртуальним оточенням і пакетами виконуються через **uv**:
 
 ```bash
-# Install dependencies
+# Встановлення залежностей та синхронізація оточення
 uv sync
 
-# Run as desktop app (Flet)
+# Запуск десктопного застосунку на базі Flet
 uv run flet run
 
-# Run as web app (Flet)
+# Запуск веб-версії застосунку на базі Flet
 uv run flet run --web
 
-# Run HTMX Web App (FastAPI + HTMX + Pico.css)
+# Запуск легкої веб-версії (FastAPI + HTMX + Pico.css)
 uv run python src/main_web.py
 
-# Run HTMX Web App with auto-reload (development)
+# Запуск веб-сервера у режимі розробки з автоперезавантаженням (FastAPI)
 uv run uvicorn web.app:web_app --reload --port 8000
 
-# Run all tests
-pytest
+# Запуск повного набору автоматизованих тестів
+uv run pytest
 
-# Run a single test
-pytest tests/test_localization.py::test_ui_localization
-pytest tests/test_web_app.py
+# Запуск окремого тестового файлу або тестового кейсу
+uv run pytest tests/test_web_app.py
+uv run pytest tests/test_localization.py::test_ui_localization
 
-# Lint and format code
-uv run ruff check --fix . && uv run ruff format .
+# Перевірка лінтером та автоматичне виправлення форматування
+uv run ruff check --fix .
+uv run ruff format .
 
-# Docker: rebuild and start
+# Збірка та запуск Docker-контейнера у фоновому режимі
 docker-compose up -d --build
 
-# Docker: start with existing image
-docker-compose up -d
+# Зупинка Docker-контейнера
+docker-compose down
 ```
 
-## Architecture
+---
 
-The app follows an `abstract → core/models → ui/web` layered flow.
+## 4. Огляд тестового покриття
 
-**`src/abstract/`** — interfaces only. `BaseTemplateManager` (document generation), `BaseGenerator`, `SMTPSenderBase`, `BaseSender`, `BaseSaver`, `BaseNameCreator`. These define contracts; no logic here.
+Проєкт має **71 автоматизований тест** у директорії `tests/`, які покривають ядро, безпеку, конфігурацію та веб-інтерфейс:
 
-**`src/core/`** — concrete implementations. `DocManager`/`TxtManager` implement `BaseTemplateManager`. `SMTPSenderTLS`/`SMTPSenderSSL` implement `SMTPSenderBase`. `EmailManager` is the registry for SMTP protocols.
+1. **`tests/test_abstract_layer.py` (6 тестів):**
+   * Реєстрація генераторів у `GlobalGenerator` та отримання зареєстрованого класу.
+   * Делегування генерації імені файлу через `NameCreator`.
+   * Збереження файлу у вихідну директорію через `FileSaver`.
+   * Ініціалізація поштового протоколу та делегування відправлення через `EmailSender`.
 
-**`src/models/`** — `AppealRequest` (Pydantic, core data model for a citizen appeal), `FileType` / `SMTPProtocol` enums, custom errors.
+2. **`tests/test_appeal_request.py` (7 тестів):**
+   * Валідація обов'язкових полів моделі `AppealRequest`.
+   * Значення за замовчуванням для опціональних атрибутів.
+   * Автоматичне формування мітки часу створення `created_at`.
+   * Метод `get_context()` з перевіркою коректності форматування дати.
 
-**`src/config/`** — pydantic-settings classes with env-var prefixes: `APP__*`, `SERVER__*`, `EMAIL_SENDER__*`, `EMAIL_RECIPIENT__*`, `GOOGLE_ANALYTICS__*`. Source: `src/assets/.env`.
+3. **`tests/test_config.py` (5 тестів):**
+   * Завантаження та перевизначення параметрів оточення для `AppSettings`, `SenderSettings`, `RecipientSettings`, `GoogleAnalytics` та `ServerSettings`.
 
-**`src/ui/`** — Flet (Flutter-based) user interface:
-- `main.py` — the wiring point for Flet. Registers generators and SMTP protocols, initializes `FluentManager`, builds `PandorasBox` (DI container), and routes views.
-- `routes/` — one file per page: `root`, `application`, `settings`, `about`, `author`, `error404`. Each exports a `ROUTE` constant and a `build_view()` function.
-- `PandorasBox` (in `src/ui/utils/models.py`) — dataclass holding shared services: `storage` (FletStorage), `generator` (GlobalGenerator), `fluent` (FluentManager), `ga` (MeasurementAPI), `name_creator`, optional `saver`, optional `sender`.
+4. **`tests/test_doc_txt_managers.py` (4 тести):**
+   * Успішний рендеринг DOCX-шаблону `DocManager` та обробка збоїв.
+   * Рендеринг текстових шаблонів `TxtManager` (Jinja2) та перевірка виявлення невизначених змінних у режимі `StrictUndefined`.
 
-**`src/web/`** — Lightweight Web UI (FastAPI + HTMX + Jinja2 + Pico.css):
-- `app.py` — FastAPI application providing lightweight HTML-first routes:
-  - `GET /` — main page with appeal form and officer status banner
-  - `POST /submit` — HTMX appeal submission endpoint (full validation, file generation, email/disk dispatch, OOB form reset)
-  - `GET /officer-modal` & `POST /officer` — modal dialog for configuring officer credentials persisted via cookies
-  - `GET /about-modal` & `GET /author-modal` — informational modal dialogs
-  - `GET /form-fields` — partial rendering for resetting form state
-- `templates/` — Jinja2 HTML5 templates (`base.html`, `index.html`) and partials (`partials/`)
-- `static/` — Local vendored assets (`htmx.min.js`, `pico.min.css`, `custom.css`) for 100% offline operation without external CDN dependencies
+5. **`tests/test_email_manager.py` (5 тестів):**
+   * Реєстрація та отримання реалізацій протоколів у `EmailManager`.
+   * Викидання помилки при спробі використати незареєстрований протокол.
+   * Контроль сумісності (дозволені тільки спадкоємці `SMTPSenderBase`).
 
-**`src/main.py`** — Runner entrypoint for the Flet desktop/web app.
+6. **`tests/test_emails_utils.py` (1 тест):**
+   * Утиліта `add_attachment_from_buffer`: перевірка визначення MIME-типу та коректності створення заголовків вкладення.
 
-**`src/main_web.py`** — Runner entrypoint for the FastAPI + HTMX web application.
+7. **`tests/test_files_utils.py` (14 тестів):**
+   * Визначення MIME-типів (`get_mime`).
+   * Генерація унікальних імен файлів (`create_file_name`).
+   * Запис байтового буфера у файл (`save`) та обробка винятків.
+   * Створення деревоподібної структури директорій за датами (`create_path_dir`) та реакція на `PermissionError`.
 
-## Key Conventions
+8. **`tests/test_localization.py` (5 тестів):**
+   * Завантаження локалей інтерфейсу, пошти та логів через `FluentManager`.
+   * Механізм резервного відновлення (фолбек на мову за замовчуванням).
+   * Перевірка валідності шляхів до каталогів перекладів.
 
-**Localization first** — never hardcode UI strings. Add a key to the appropriate `.ftl` file in `src/assets/locales/<locale>/` (`ui.ftl`, `mail.ftl`, or `logs.ftl`) and retrieve it with `box.fluent.get("key")` or `box.fluent.get("key", param=value)`.
+9. **`tests/test_message_factory.py` (10 тестів):**
+   * Заголовки листа (`From`, `To`, `Subject`, `Cc`, `Bcc`).
+   * Робота з вкладеннями різних форматів.
+   * Підтримка множинних адрес одержувачів.
 
-**Registry pattern** — to add a new document format, subclass `BaseTemplateManager` in `src/core/`, then register it in `src/ui/main.py`:
-```python
-GlobalGenerator.register(FileType.PDF, MyPdfManager)
-```
-Same pattern for SMTP protocols via `EmailManager.register(SMTPProtocol.X, MyClass)`.
+10. **`tests/test_models.py` (6 тестів):**
+    * Валідація значень системних переліків (`SMTPProtocol`, `FileType`, `LoggingLevel`, `EventName`, `Analytics`).
+    * Класифікація помилок відправлення електронної пошти (`EmailSendError` / `EmailError`).
 
-**Docker versioning** — `APP_VERSION` in the root `.env` tags the image. `pull_policy: missing` means the image is never auto-pulled or rebuilt if it already exists locally; use `--build` explicitly when you want a new build.
+11. **`tests/test_smtp_implementations.py` (3 тести):**
+    * Успішний транспорт `SMTPSenderSSL` з SSL-обгорткою сокета.
+    * Успішний транспорт `SMTPSenderTLS` з процедурою `STARTTLS`.
+    * Перехоплення та трансляція мережевих помилок і збоїв автентифікації в `EmailSendError`.
 
-**No database** — persistence is client-side only:
-- In Flet: via `FletStorage` (SharedPreferences wrapper). Stored keys: `client_id`, `officer_name`, `officer_position`, `officer_email`.
-- In Web/HTMX: via URL-encoded HTTP cookies (`client_id`, `officer_name`, `officer_position`, `officer_email`).
+12. **`tests/test_web_app.py` (6 тестів):**
+    * `test_index_page` — маршрут `GET /`, перевірка статусу 200, наявність статичних ресурсів, автогенерація кукі `client_id`.
+    * `test_about_and_author_modals` — маршрути `GET /about-modal` та `GET /author-modal`.
+    * `test_officer_modal_and_save` — діалог налаштування посадової особи та збереження в кукі (`POST /officer`).
+    * `test_submit_without_officer` — блокування подання звернення без налаштованого профілю оператора.
+    * `test_submit_validation_errors` — валідація полів ПІБ, номерів телефонів та категорій заявників.
+    * `test_submit_success` — успішне подання звернення, делегування документообігу, скидання форми HTMX OOB та виклик аналітики.
 
-## Testing
+### Модулі, що не покриті тестами (кандидати на майбутнє розширення)
+* **`src/ui/` (Flet GUI):** Файли маршрутів (`routes/application.py`, `settings.py`, `about.py`, `author.py`, `root.py`, `error404.py`) та ініціалізація `ui/main.py`. Потребують складного мокування контексту Flet Page / GUI Lifecycle.
+* **`src/main.py` та `src/main_web.py`:** Скрипти-запускачі верхнього рівня.
 
-The project has 71 tests covering core functionality and the web layer:
+---
 
-**`tests/test_abstract_layer.py`** — 6 tests for abstract layer registries and managers:
-- GlobalGenerator registration and class retrieval
-- NameCreator file name generation delegator
-- FileSaver output directory handling and saving
-- EmailSender protocol instantiation and email transmission delegation
+## 5. Правила роботи з репозиторієм
 
-**`tests/test_appeal_request.py`** — 7 tests for the `AppealRequest` Pydantic model:
-- Required field validation
-- Optional field defaults
-- Automatic `created_at` timestamp
-- `get_context()` method with date formatting
+### 5.1. Дотримання архітектурних кордонів
+* Будь-який новий функціонал збереження, відправки чи документообігу повинен спочатку декларуватися в `src/abstract/` і лише потім імплементуватися в `src/core/`.
+* Пряме використання сторонніх бібліотек або системних викликів у коді представлення (`src/ui/` та `src/web/`) заборонено — робота здійснюється виключно через зареєстровані менеджери.
 
-**`tests/test_config.py`** — 5 tests for application configuration settings:
-- Environment variable overrides for AppSettings, SenderSettings, RecipientSettings, GoogleAnalytics, and ServerSettings
+### 5.2. Суворе дотримання локалізації
+* Не додавайте текстові рядки безпосередньо у верстку або код. Новий текст завжди супроводжується додаванням відповідних ключів у всі підтримувані файли `src/assets/locales/<locale>/` (`uk` та `en`).
 
-**`tests/test_doc_txt_managers.py`** — 4 tests for document template managers:
-- DocManager DOCX rendering success and failure modes
-- TxtManager Jinja2 text rendering success and strict undefined failure modes
+### 5.3. Захист конфігурацій та чутливих даних
+* Ніколи не комітьте реальні паролі від поштових скриньок або ботів у `.env`. Використовуйте `.env.example` як безпечний шаблон для нових змінних.
 
-**`tests/test_email_manager.py`** — 5 tests for the `EmailManager` registry:
-- Protocol registration and retrieval
-- Error handling for unregistered protocols
-- Overwrite behavior
-- Verification that only SMTPSenderBase subclasses are registered
-- Delegation to protocol implementations
+### 5.4. Обов'язкове тестування та перевірка стилю
+* Перед внесенням змін до гілки обов'язково запустити перевірку коду та набір тестів:
+  ```bash
+  uv run ruff check . && uv run ruff format --check . && uv run pytest
+  ```
 
-**`tests/test_emails_utils.py`** — 1 test for email buffer utilities:
-- `add_attachment_from_buffer` mime type determination and attachments handling
+### 5.5. Оновлення документації та `AGENTS.md`
+* У випадку зміни структури каталогів, додавання нових модулів, зміни правил збірки чи розширення конвенцій розробник або AI-агент зобов'язаний зафіксувати ці зміни в цьому файлі (`AGENTS.md`).
 
-**`tests/test_files_utils.py`** — 14 tests for file utilities in `src/utils/files.py`:
-- MIME type detection (`get_mime`)
-- Unique filename generation (`create_file_name`)
-- Buffer-to-file saving (`save`) and error paths
-- Date-based directory creation (`create_path_dir`) and PermissionError handling
-
-**`tests/test_localization.py`** — 5 tests for `FluentManager`:
-- UI, mail, and logs localization
-- Fallback mechanism
-- Locale directory validation
-
-**`tests/test_message_factory.py`** — 10 tests for `AppealMessageFactory`:
-- Email headers (From, To, Subject, Cc, Bcc)
-- Attachment handling
-- Multiple recipient support
-
-**`tests/test_models.py`** — 6 tests for system enums and exceptions:
-- Values validation for SMTPProtocol, FileType, LoggingLevel, EventName, Analytics
-- Custom email error classification (`EmailSendError` / `EmailError`)
-
-**`tests/test_smtp_implementations.py`** — 3 tests for SMTP transport implementations:
-- SMTPSenderSSL success path and SSL socket wrapping
-- SMTPSenderTLS success path and STARTTLS negotiation flow
-- Exception handling and translation to `EmailSendError` on connection/authentication failures
-
-**`tests/test_web_app.py`** — 6 tests for FastAPI + HTMX interface:
-- `test_index_page` — GET `/` route, HTTP 200, asset references, automatic `client_id` cookie creation
-- `test_about_and_author_modals` — GET `/about-modal` and `/author-modal` modal dialog content
-- `test_officer_modal_and_save` — GET `/officer-modal`, form validation, POST `/officer` and cookie emission
-- `test_submit_without_officer` — POST `/submit` requirement for officer profile configuration
-- `test_submit_validation_errors` — POST `/submit` validation of applicant name, phone numbers, and categories
-- `test_submit_success` — Successful appeal submission, document generation delegation, OOB form reset, and analytics
-
-**Test coverage:** Core business logic (`src/core/`, `src/abstract/`, `src/utils/`, `src/config/`, `src/models/`) and Web UI (`src/web/`) are fully tested with high coverage. Run with `pytest` or `uv run pytest`.
-
-## Modules Not Yet Covered by Tests
-
-The following modules are currently untested and would benefit from test coverage:
-
-**`src/ui/`** — UI components and routing (lower priority, requires Flet mocking):
-- `main.py` — Route handling and app initialization
-- `routes/application.py` — Application form page
-- `routes/settings.py` — Settings page
-- `routes/about.py` — About page
-- `routes/author.py` — Author page
-- `routes/error404.py` — 404 error page
-- `routes/root.py` — Root page
-- `utils/models.py` — `PandorasBox` and `Officer` dataclasses
-- `utils/elements.py` — UI element factories (`back_button`, `app_bar`, `link`)
-- `utils/style.py` — Style settings
-
-**`src/main.py`** — Entrypoint runner script.
-
-**Priority for testing:** UI components (`src/ui/`) and runner entrypoints are lower priority as they require extensive mocking of the Flet framework and GUI lifecycle.
+### 5.6 Робота з Git
+Заборонено виконувати `git add`, `git commit` та `git push` без прямого наказу користувача.
