@@ -1,22 +1,33 @@
 name: h-line
 
+x-app-base: &app-base
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: flet_h-line:${APP_VERSION}
+  pull_policy: missing
+  restart: always
+  env_file:
+    - src/assets/.env
+  volumes:
+    - ./docker_data/output:/app/src/assets/output
+    - ./src/assets/templates:/app/src/assets/templates
+    - ./src/assets/locales:/app/src/assets/locales
+
 services:
   h-line:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: flet_h-line:${APP_VERSION}
-    pull_policy: missing
+    <<: *app-base
     container_name: flet_h-line_app
-    restart: always
-    env_file:
-      - src/assets/.env
-    volumes:
-      - ./docker_data/output:/app/src/assets/output
-      - ./docker_data/templates:/app/src/assets/templates
-      - ./docker_data/locales:/app/src/assets/locales
+    command: ["python", "src/main.py"]
     ports:
       - "8081:8000"
+
+  h-line-web:
+    <<: *app-base
+    container_name: web_h-line_app
+    command: ["python", "src/main_web.py"]
+    ports:
+      - "8082:8000"
 
   cloudflared:
 #    image: cloudflare/cloudflared:latest
@@ -26,3 +37,4 @@ services:
     command: tunnel --no-autoupdate run --token ${CLOUDFLARE__TUNNEL_TOKEN}
     depends_on:
       - h-line
+      - h-line-web

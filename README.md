@@ -5,7 +5,7 @@
 [![DOI](https://zenodo.org/badge/1211130746.svg)](https://doi.org/10.5281/zenodo.19590690)
 ![GitHub License](https://img.shields.io/github/license/BogdanovychA/h-line?logoColor=grey&color=blue)
 
-Застосунок для швидкої фіксації та надсилання звернень громадян через електронну пошту. Побудований на базі **Flet** (Python), підтримує генерацію документів (DOCX, MD, HTML) та автоматичне відправлення через SMTP.
+Застосунок для швидкої фіксації та надсилання звернень громадян через електронну пошту. Проєкт підтримує два варіанти інтерфейсу: кросплатформенний на **Flet** (Desktop/Web) та легкий автономний веб-інтерфейс на **FastAPI + HTMX + Pico.css**. Підтримує генерацію документів (DOCX, MD, HTML) та автоматичне відправлення через SMTP.
 
 ## 🚀 Як запустити локально
 
@@ -19,11 +19,24 @@ cp src/assets/.env.example src/assets/.env
 Відредагуйте `.env`, вказавши ваші налаштування SMTP (Gmail, Outlook тощо) та email отримувача.
 
 ### 2. Запуск через uv
-Встановіть залежності та запустіть:
+Встановіть залежності:
+```bash
+uv sync
+```
 
+#### Варіант А: Легкий Web-інтерфейс (FastAPI + HTMX)
+* **Звичайний запуск:**
   ```bash
-  uv sync
+  uv run python src/main_web.py
   ```
+  Застосунок буде доступний за адресою `http://localhost:8000`.
+
+* **У режимі розробки (з автоперезавантаженням `reload`):**
+  ```bash
+  uv run uvicorn web.app:web_app --reload --app-dir src --port 8000
+  ```
+
+#### Варіант Б: Flet UI (Desktop / Web)
 * **Як desktop-застосунок:**
   ```bash
   uv run flet run
@@ -52,7 +65,9 @@ cp src/assets/.env.example src/assets/.env
 
 ### 2. Налаштування контейнера
 * **Політика розгортання:** Використовується `pull_policy: missing`, що забезпечує стабільність — якщо образ із вказаною версією вже є локально, він не буде збиратися автоматично.
-* **Порт:** Застосунок буде доступний за адресою `http://localhost:8081`.
+* **Порти:**
+    * **Flet UI:** `http://localhost:8081`
+    * **Web UI (FastAPI + HTMX):** `http://localhost:8082`
 * **Змінні оточення:** Docker використовує файл `src/assets/.env` для налаштувань самого застосунку.
 * **Дані:**
     * Вихідні файли зберігаються в `./docker_data/output`.
