@@ -17,14 +17,12 @@ x-app-base: &app-base
 services:
   h-line:
     <<: *app-base
-    container_name: flet_h-line_app
     command: ["python", "src/main.py"]
     ports:
       - "8081:8000"
 
   h-line-web:
     <<: *app-base
-    container_name: web_h-line_app
     command: ["python", "src/main_web.py"]
     ports:
       - "8082:8000"
@@ -32,7 +30,6 @@ services:
   cloudflared:
 #    image: cloudflare/cloudflared:latest
     image: cloudflare/cloudflared:2026.10.3
-    container_name: h-line-cloudflared
     restart: always
     command: tunnel --no-autoupdate run --token ${CLOUDFLARE__TUNNEL_TOKEN}
     depends_on:
