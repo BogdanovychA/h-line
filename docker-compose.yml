@@ -35,3 +35,11 @@ services:
     depends_on:
       - h-line
       - h-line-web
+
+  cloudflared-b9h:
+    image: cloudflare/cloudflared:2026.10.3
+    restart: always
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE__TUNNEL_TOKEN_B9H}
+    depends_on:
+      - h-line
+      - h-line-web
